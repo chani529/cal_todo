@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:calendartodo/util/getMonthFunction.dart';
 import 'package:flutter/material.dart';
+import 'package:calendartodo/widget/tableRows.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CalTable extends StatefulWidget {
   const CalTable({Key? key}) : super(key: key);
@@ -15,121 +18,61 @@ class _CalTableState extends State<CalTable> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    print(height);
-    print(width);
-    var now = DateTime.now();
-    int nowMonth = 2;
-    var selectedDate = DateTime(2022, nowMonth, 1);
-    var selectedDateFirstWeekSunday = DateTime(now.year, nowMonth,
-        1 - (selectedDate.weekday != 7 ? selectedDate.weekday : 0));
-    // var test = now.add(0 - now.weekday).day;
-
-    var prevMonthDate = DateTime(now.year, nowMonth, 0);
-    var selectedEndDate = DateTime(now.year, nowMonth + 1, 0);
-    List MonthData = [];
-    if (selectedDateFirstWeekSunday.day != 1) {
-      for (int i = selectedDateFirstWeekSunday.day;
-          i <= prevMonthDate.day;
-          i++) {
-        MonthData.add(i);
-      }
-    }
-    for (int i = 1; i <= selectedEndDate.day; i++) {
-      MonthData.add(i);
-    }
-    for (int i = 1; MonthData.length < 42; i++) {
-      MonthData.add(i);
-    }
+    // print(height);
+    // print(width);
+    UtilFunction func = new UtilFunction();
+    List<int> monthData = func.getMounthList();
+    readItems();
     /*24 is for notification bar on Android*/
     return Container(
       constraints: BoxConstraints(
-        maxHeight: height,
+        minHeight: 100,
       ),
-      child: Stack(
+      child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 1, color: Colors.grey.shade400)),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 1, color: Colors.grey.shade400)),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 1, color: Colors.grey.shade400)),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 1, color: Colors.grey.shade400)),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 1, color: Colors.grey.shade400)),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 1, color: Colors.grey.shade400)),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                      border:
-                          Border.all(width: 1, color: Colors.grey.shade400)),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-              top: 0,
-              left: 0,
-              width: width,
-              height: 800,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.red,
-                    border: Border.all(width: 3, color: Colors.red)),
-                child: Column(
-                  children: [
-                    Container(
-                      // height: 600,
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          border: Border.all(width: 3, color: Colors.blue)),
-                    )
-                  ],
-                ),
-                // color: Colors.,
-              )),
+          TableRows(startNum: 0, endNum: 6),
+          TableRows(startNum: 7, endNum: 13),
+          TableRows(startNum: 14, endNum: 20),
+          TableRows(startNum: 21, endNum: 27),
+          TableRows(startNum: 28, endNum: 34),
+          TableRows(startNum: 35, endNum: 41),
         ],
       ),
     );
+  }
+
+  static Stream<QuerySnapshot> readItems() {
+    CollectionReference notesItemCollection =
+        FirebaseFirestore.instance.collection('todo_tbl');
+    print(notesItemCollection.snapshots());
+    return notesItemCollection.snapshots();
+  }
+
+  Future<void> addItem({
+    required String title,
+  }) async {
+    DocumentReference documentReferencer =
+        FirebaseFirestore.instance.collection('task_list').doc();
+
+    Map<String, dynamic> data = <String, dynamic>{
+      "title": title,
+    };
+
+    await documentReferencer
+        .set(data)
+        .whenComplete(() => print("Notes item added to the database"))
+        .catchError((e) => print(e));
+  }
+
+  Future<void> deleteItem({
+    required String docId,
+  }) async {
+    DocumentReference documentReferencer =
+        FirebaseFirestore.instance.collection('task_list').doc(docId);
+
+    await documentReferencer
+        .delete()
+        .whenComplete(() => print('Note item deleted from the database'))
+        .catchError((e) => print(e));
   }
 }

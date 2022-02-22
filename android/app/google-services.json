@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "137892271767",
+    "project_id": "calendartodo-af6b6",
+    "storage_bucket": "calendartodo-af6b6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137892271767:android:4d665c4eb710eaf72d3bd2",
+        "android_client_info": {
+          "package_name": "com.example.calendartodo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137892271767-4h7sqtulqgld4st575geq4ebqbu5hh7o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJVFWyCLJTbBtWtBfEUCP39LophejxW1A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137892271767-4h7sqtulqgld4st575geq4ebqbu5hh7o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
