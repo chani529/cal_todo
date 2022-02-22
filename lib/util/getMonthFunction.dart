@@ -1,16 +1,15 @@
 // ignore_for_file: file_names, camel_case_types
 
 class UtilFunction {
-  List<int> getMounthList() {
+  List<int> getMounthList(int year, int month) {
     var now = DateTime.now();
-    int nowMonth = 2;
-    var selectedDate = DateTime(2022, nowMonth, 1);
-    var selectedDateFirstWeekSunday = DateTime(now.year, nowMonth,
+    var selectedDate = DateTime(year, month, 1);
+    var selectedDateFirstWeekSunday = DateTime(year, month,
         1 - (selectedDate.weekday != 7 ? selectedDate.weekday : 0));
     // var test = now.add(0 - now.weekday).day;
 
-    var prevMonthDate = DateTime(now.year, nowMonth, 0);
-    var selectedEndDate = DateTime(now.year, nowMonth + 1, 0);
+    var prevMonthDate = DateTime(year, month, 0);
+    var selectedEndDate = DateTime(year, month + 1, 0);
     List<int> monthData = [];
     if (selectedDateFirstWeekSunday.day != 1) {
       for (int i = selectedDateFirstWeekSunday.day;

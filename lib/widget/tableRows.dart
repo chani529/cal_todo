@@ -1,12 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:calendartodo/util/getMonthFunction.dart';
 import 'package:flutter/material.dart';
 
 class TableRows extends StatefulWidget {
   final int startNum;
   final int endNum;
-  const TableRows({Key? key, required this.startNum, required this.endNum})
+  final List<int> monthData;
+  const TableRows(
+      {Key? key,
+      required this.startNum,
+      required this.endNum,
+      required this.monthData})
       : super(key: key);
 
   @override
@@ -21,8 +25,6 @@ class _TableRowsState extends State<TableRows> {
 
     // print(height);
     // print(width);
-    UtilFunction func = UtilFunction();
-    List<int> monthData = func.getMounthList();
     return Container(
       height: 50,
       constraints: BoxConstraints(
@@ -40,7 +42,7 @@ class _TableRowsState extends State<TableRows> {
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Container(
-                      child: Text(monthData[i].toString()),
+                      child: Text(widget.monthData[i].toString()),
                     ),
                   ),
                 ),

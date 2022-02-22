@@ -15,16 +15,13 @@ class CalTable extends StatefulWidget {
 class _CalTableState extends State<CalTable> {
   @override
   Widget build(BuildContext context) {
-    final int toYear = 2022;
-    final int toMonth = 12;
-
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     // print(height);
     // print(width);
-    UtilFunction func = UtilFunction();
-    List<int> monthData = func.getMounthList(toYear, toMonth);
+    UtilFunction func = new UtilFunction();
+    List<int> monthData = func.getMounthList();
     readItems();
     /*24 is for notification bar on Android*/
     return Container(
@@ -33,33 +30,25 @@ class _CalTableState extends State<CalTable> {
       ),
       child: Column(
         children: [
-          TableRows(startNum: 0, endNum: 6, monthData: monthData),
-          TableRows(startNum: 7, endNum: 13, monthData: monthData),
-          TableRows(startNum: 14, endNum: 20, monthData: monthData),
-          TableRows(startNum: 21, endNum: 27, monthData: monthData),
-          TableRows(startNum: 28, endNum: 34, monthData: monthData),
-          TableRows(startNum: 35, endNum: 41, monthData: monthData),
-          TextButton(
-              onPressed: () {
-                addItem(start_date: 20200212);
-              },
-              child: Text("Add"))
+          TableRows(startNum: 0, endNum: 6),
+          TableRows(startNum: 7, endNum: 13),
+          TableRows(startNum: 14, endNum: 20),
+          TableRows(startNum: 21, endNum: 27),
+          TableRows(startNum: 28, endNum: 34),
+          TableRows(startNum: 35, endNum: 41),
         ],
       ),
     );
   }
 
   static Stream<QuerySnapshot> readItems() {
-    Query<Map<String, dynamic>> notesItemCollection = FirebaseFirestore.instance
-        .collection('todo_tbl')
-        .where('start_date', isGreaterThan: 20200213);
-
-    print(notesItemCollection);
+    CollectionReference notesItemCollection =
+        FirebaseFirestore.instance.collection('todo_tbl');
     return notesItemCollection.snapshots();
   }
 
   Future<void> addItem({
-    required int start_date,
+    required Timestamp start_date,
   }) async {
     DocumentReference documentReferencer =
         FirebaseFirestore.instance.collection('todo_tbl').doc();
