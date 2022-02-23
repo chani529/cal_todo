@@ -16,7 +16,7 @@ class _CalTableState extends State<CalTable> {
   @override
   Widget build(BuildContext context) {
     final int toYear = 2022;
-    final int toMonth = 2;
+    final int toMonth = 12;
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -25,8 +25,7 @@ class _CalTableState extends State<CalTable> {
     // print(width);
     UtilFunction func = UtilFunction();
     List<int> monthData = func.getMounthList(toYear, toMonth);
-    Stream<QuerySnapshot> taskList =
-        readItems(toYear: toYear, toMonth: toMonth, monthData: monthData);
+    readItems();
     /*24 is for notification bar on Android*/
     return Container(
       constraints: BoxConstraints(
@@ -34,36 +33,15 @@ class _CalTableState extends State<CalTable> {
       ),
       child: Column(
         children: [
-          TableRows(
-              startNum: 0, endNum: 6, monthData: monthData, taskList: taskList),
-          TableRows(
-              startNum: 7,
-              endNum: 13,
-              monthData: monthData,
-              taskList: taskList),
-          TableRows(
-              startNum: 14,
-              endNum: 20,
-              monthData: monthData,
-              taskList: taskList),
-          TableRows(
-              startNum: 21,
-              endNum: 27,
-              monthData: monthData,
-              taskList: taskList),
-          TableRows(
-              startNum: 28,
-              endNum: 34,
-              monthData: monthData,
-              taskList: taskList),
-          TableRows(
-              startNum: 35,
-              endNum: 41,
-              monthData: monthData,
-              taskList: taskList),
+          TableRows(startNum: 0, endNum: 6, monthData: monthData),
+          TableRows(startNum: 7, endNum: 13, monthData: monthData),
+          TableRows(startNum: 14, endNum: 20, monthData: monthData),
+          TableRows(startNum: 21, endNum: 27, monthData: monthData),
+          TableRows(startNum: 28, endNum: 34, monthData: monthData),
+          TableRows(startNum: 35, endNum: 41, monthData: monthData),
           TextButton(
               onPressed: () {
-                addItem(start_date: 20220228);
+                addItem(start_date: 20200212);
               },
               child: Text("Add"))
         ],
@@ -71,20 +49,12 @@ class _CalTableState extends State<CalTable> {
     );
   }
 
-  static Stream<QuerySnapshot> readItems(
-      {required int toYear,
-      required int toMonth,
-      required List<int> monthData}) {
-    print("xx");
-    print(
-        "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}");
+  static Stream<QuerySnapshot> readItems() {
     Query<Map<String, dynamic>> notesItemCollection = FirebaseFirestore.instance
         .collection('todo_tbl')
-        .where('start_date',
-            isGreaterThan:
-                "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}")
-        .where('start_date', isLessThanOrEqualTo: 20220220);
+        .where('start_date', isGreaterThan: 20200213);
 
+    print(notesItemCollection);
     return notesItemCollection.snapshots();
   }
 

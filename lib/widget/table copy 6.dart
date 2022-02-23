@@ -58,9 +58,10 @@ class _CalTableState extends State<CalTable> {
   }
 
   static Stream<QuerySnapshot> readItems() {
-    CollectionReference notesItemCollection =
-        FirebaseFirestore.instance.collection('todo_tbl');
-    print(notesItemCollection.snapshots());
+    Query<Map<String, dynamic>> notesItemCollection = FirebaseFirestore.instance
+        .collection('todo_tbl')
+        .where('start_date', isGreaterThanOrEqualTo: 20200211)
+        .where('start_date', isLessThanOrEqualTo: 20220220);
     return notesItemCollection.snapshots();
   }
 

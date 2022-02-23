@@ -22,12 +22,6 @@ class TableRows extends StatefulWidget {
 
 class _TableRowsState extends State<TableRows> {
   @override
-  void initState() {
-    _getPresentTaskList();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -35,7 +29,7 @@ class _TableRowsState extends State<TableRows> {
     // print(height);
     // print(width);
     return Container(
-      height: 80,
+      height: 100,
       constraints: BoxConstraints(
         minHeight: 30,
       ),
@@ -61,7 +55,7 @@ class _TableRowsState extends State<TableRows> {
               top: 0,
               left: 0,
               width: width,
-              height: 100,
+              height: 50,
               child: Column(
                 children: [
                   Container(
@@ -70,52 +64,44 @@ class _TableRowsState extends State<TableRows> {
                         // color: Colors.black,
                         border: Border.all(width: 1, color: Colors.blue)),
                   ),
-                  for (var i = 0; i < 3; i++)
-                    Container(
-                      height: 20,
-                      decoration: BoxDecoration(
-                          // color: Colors.black,
-                          border: Border.all(width: 1, color: Colors.blue)),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 7,
-                            child: Container(
-                              color: Colors.blue,
-                              child: Text("[VRIS] 모시깽이 작업"),
-                            ),
-                          )
-
-                          // Expanded(
-                          //   flex: 5,
-                          //   child: Container(
-                          //     color: Colors.red,
-                          //     child: Text("[VRIS] 모시깽이 작업"),
-                          //   ),
-                          // ),
-                        ],
-                      ),
+                  Container(
+                    height: 20,
+                    decoration: BoxDecoration(
+                        // color: Colors.black,
+                        border: Border.all(width: 1, color: Colors.blue)),
+                    child: Row(
+                      children: [
+                        StreamBuilder(
+                          stream: widget.taskList,
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              return Expanded(
+                                flex: 7,
+                                child: Container(
+                                  color: Colors.blue,
+                                  child: Text("[VRIS] 모시깽이 작업"),
+                                ),
+                              );
+                            } else {
+                              return Text("ss");
+                            }
+                          },
+                        ),
+                        // Expanded(
+                        //   flex: 5,
+                        //   child: Container(
+                        //     color: Colors.red,
+                        //     child: Text("[VRIS] 모시깽이 작업"),
+                        //   ),
+                        // ),
+                      ],
                     ),
+                  ),
                 ],
               )),
         ],
       ),
     );
-  }
-
-  Future<void> _getPresentTaskList() async {
-    await for (QuerySnapshot value in widget.taskList) {
-      // print("xx");
-      var tmp = value.docs.where((e) {
-        // print(e["start_date"]);
-        return e["start_date"] >=
-            int.parse(widget.monthData[widget.startNum] < 10
-                ? "2022020${widget.monthData[widget.startNum]}"
-                : "202202${widget.monthData[widget.startNum]}");
-      });
-      // tmp.forEach((element) {
-      //   print(element['start_date']);
-      // });
-    }
   }
 }
