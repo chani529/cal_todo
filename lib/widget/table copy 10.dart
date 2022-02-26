@@ -45,122 +45,113 @@ class _CalTableState extends State<CalTable> {
       constraints: BoxConstraints(
         minHeight: 100,
       ),
-      child: FutureBuilder(
-          future: tests(toYear: toYear, toMonth: toMonth, monthData: monthData),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            print("bbbbb");
-            taskList.listen((event) {
-              abcd =
-                  tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
-            });
-            //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                abcd = tests(
-                    toYear: toYear, toMonth: toMonth, monthData: monthData);
+      child: Column(
+        children: [
+          // TableRows(
+          //     startNum: 0, endNum: 6, monthData: monthData, taskList: taskList),
+          // startNum: 0, endNum: 6, monthData: monthData, taskList: filterList(toYear: toYear,toMonth: toMonth,endNum:6,monthData: monthData,taskList: taskList),
+          // TableRows(
+          //     startNum: 7,
+          //     endNum: 13,
+          //     monthData: monthData,
+          //     taskList: filterList(
+          //         toYear: toYear,
+          //         toMonth: toMonth,
+          //         endNum: 13,
+          //         monthData: monthData,
+          //         taskList: taskList)),
+          // TableRows(
+          //     startNum: 14,
+          //     endNum: 20,
+          //     monthData: monthData,
+          //     taskList: filterList(
+          //         toYear: toYear,
+          //         toMonth: toMonth,
+          //         endNum: 20,
+          //         monthData: monthData,
+          //         taskList: taskList)),
+          // TableRows(
+          //     startNum: 21,
+          //     endNum: 27,
+          //     monthData: monthData,
+          //     taskList: filterList(
+          //         toYear: toYear,
+          //         toMonth: toMonth,
+          //         endNum: 27,
+          //         monthData: monthData,
+          //         taskList: taskList)),
+          // TableRows(
+          //     startNum: 28,
+          //     endNum: 34,
+          //     monthData: monthData,
+          //     taskList: filterList(
+          //         toYear: toYear,
+          //         toMonth: toMonth,
+          //         endNum: 34,
+          //         monthData: monthData,
+          //         taskList: taskList)),
+          // TableRows(
+          //     startNum: 35,
+          //     endNum: 41,
+          //     monthData: monthData,
+          //     taskList: filterList(
+          //         toYear: toYear,
+          //         toMonth: toMonth,
+          //         endNum: 41,
+          //         monthData: monthData,
+          //         taskList: taskList)),
+          FutureBuilder(
+              future:
+                  tests(toYear: toYear, toMonth: toMonth, monthData: monthData),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                print("bbbbb");
+                taskList.listen((event) {
+                  abcd = tests(
+                      toYear: toYear, toMonth: toMonth, monthData: monthData);
+                });
+                //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    abcd = tests(
+                        toYear: toYear, toMonth: toMonth, monthData: monthData);
 
-                return Text('loading...');
-              case ConnectionState.waiting:
-                return Text('loading...');
-              default:
-                if (snapshot.hasData == false) {
-                  return CircularProgressIndicator();
-                }
+                    return new Text('loading...');
+                  case ConnectionState.waiting:
+                    return new Text('loading...');
+                  default:
+                    if (snapshot.hasData == false) {
+                      return CircularProgressIndicator();
+                    }
 
-                //error가 발생하게 될 경우 반환하게 되는 부분
-                else if (snapshot.hasError) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  );
+                    //error가 발생하게 될 경우 반환하게 되는 부분
+                    else if (snapshot.hasError) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Error: ${snapshot.error}',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      );
+                    }
+                    // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                    else {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          snapshot.data.toString(),
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      );
+                    }
                 }
-                // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                else {
-                  return Column(
-                    children: [
-                      // Text(snapshot.data.toString()),
-                      Text(filterList(
-                              taskList: snapshot.data,
-                              toYear: toYear,
-                              toMonth: toMonth,
-                              endNum: 6,
-                              startNum: 0,
-                              monthData: monthData)
-                          .toString()),
-                      // TableRows(
-                      //     startNum: 0,
-                      //     endNum: 6,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 6,
-                      //         startNum: 0,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 7,
-                      //     endNum: 13,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 7,
-                      //         startNum: 13,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 14,
-                      //     endNum: 20,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 14,
-                      //         startNum: 20,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 21,
-                      //     endNum: 27,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 21,
-                      //         startNum: 27,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 28,
-                      //     endNum: 34,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 28,
-                      //         startNum: 34,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 35,
-                      //     endNum: 41,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 35,
-                      //         startNum: 41,
-                      //         monthData: monthData)),
-                    ],
-                  );
-                }
-            }
-          }),
+              }),
+          TextButton(
+              onPressed: () {
+                // addItem(start_date: 20220228);
+              },
+              child: Text(abcd.toString()))
+        ],
+      ),
     );
   }
 
@@ -239,15 +230,14 @@ class _CalTableState extends State<CalTable> {
           "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}");
     } else if (startNum > 20) {
       startDate = int.parse(
-          "${monthData[startNum] < 10 && toMonth == 12 ? toYear + 1 : toYear}${monthData[startNum] < 10 ? toMonth != 12 && toMonth + 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[startNum] < 10 ? toMonth == 12 ? 1 : toMonth + 1 : toMonth}${monthData[startNum] < 10 ? "0${monthData[startNum]}" : monthData[0]}");
+          "${monthData[startNum] < 10 && toMonth == 12 ? toYear + 1 : toYear}${monthData[startNum] < 10 ? toMonth != 12 && toMonth + 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[startNum] < 10 ? toMonth == 12 ? 1 : toMonth + 1 : toMonth}${monthData[startNum] < 10 ? "0$monthData[startNum]" : monthData[0]}");
     } else {
       startDate = int.parse(
           "$toYear${monthData[startNum] < 10 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[startNum] < 10 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[startNum] < 10 ? "0${monthData[startNum]}" : monthData[startNum]}");
     }
     print("psjdfpajsdfs");
     print(startDate);
-    for (int i = 0; i < taskList.length; i++) {
-      var task = taskList[i];
+    for (var task in taskList) {
       if (task["start_date"] < monthData[endNum] &&
           task['end_date'] > startDate) {
         tmp.add(task);
