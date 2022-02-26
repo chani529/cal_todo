@@ -82,80 +82,56 @@ class _CalTableState extends State<CalTable> {
                   return Column(
                     children: [
                       // Text(snapshot.data.toString()),
-                      Text(filterList(
-                              taskList: snapshot.data,
-                              toYear: toYear,
-                              toMonth: toMonth,
-                              endNum: 6,
-                              startNum: 0,
-                              monthData: monthData)
-                          .toString()),
-                      // TableRows(
-                      //     startNum: 0,
-                      //     endNum: 6,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
+                      // Text(filterList(
                       //         taskList: snapshot.data,
                       //         toYear: toYear,
                       //         toMonth: toMonth,
                       //         endNum: 6,
                       //         startNum: 0,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 7,
-                      //     endNum: 13,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 7,
-                      //         startNum: 13,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 14,
-                      //     endNum: 20,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 14,
-                      //         startNum: 20,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 21,
-                      //     endNum: 27,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 21,
-                      //         startNum: 27,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 28,
-                      //     endNum: 34,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 28,
-                      //         startNum: 34,
-                      //         monthData: monthData)),
-                      // TableRows(
-                      //     startNum: 35,
-                      //     endNum: 41,
-                      //     monthData: monthData,
-                      //     taskList: filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 35,
-                      //         startNum: 41,
-                      //         monthData: monthData)),
+                      //         monthData: monthData)
+                      //     .toString()),
+                      TableRows(
+                          startNum: 0,
+                          endNum: 6,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 7,
+                          endNum: 13,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 14,
+                          endNum: 20,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 21,
+                          endNum: 27,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 28,
+                          endNum: 34,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 35,
+                          endNum: 41,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
                     ],
                   );
                 }

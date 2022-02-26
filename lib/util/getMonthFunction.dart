@@ -15,14 +15,46 @@ class UtilFunction {
       for (int i = selectedDateFirstWeekSunday.day;
           i <= prevMonthDate.day;
           i++) {
-        monthData.add(i);
+        var tmp = '';
+        if (month == 1) {
+          tmp = "${year - 1}12";
+        } else if (month < 10) {
+          tmp = "${year}0$month";
+        } else {
+          tmp = '$year$month';
+        }
+        monthData.add(int.parse("$tmp$i"));
       }
     }
     for (int i = 1; i <= selectedEndDate.day; i++) {
-      monthData.add(i);
+      var tmp = '';
+      if (month < 10) {
+        tmp = "${year}0$month";
+      } else {
+        tmp = '$year$month';
+      }
+      if (i < 10) {
+        tmp += "0$i";
+      } else {
+        tmp += i.toString();
+      }
+      monthData.add(int.parse(tmp));
     }
     for (int i = 1; monthData.length < 42; i++) {
-      monthData.add(i);
+      var tmp = '';
+      if (month == 12) {
+        tmp = "${year + 1}01";
+      } else if (month < 10) {
+        tmp = "${year}0$month";
+      } else {
+        tmp = '$year$month';
+      }
+      if (i < 10) {
+        tmp += "0$i";
+      } else {
+        tmp += i.toString();
+      }
+      monthData.add(int.parse(tmp));
     }
     return monthData;
   }
