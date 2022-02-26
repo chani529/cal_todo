@@ -36,11 +36,12 @@ class _TableRowsState extends State<TableRows> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-
+    _setRowUIList();
     // print(height);
     // print(width);
     return Container(
-      height: 80,
+      height: 100.0,
+      // height: 80.0 * widget.taskList.length,
       constraints: BoxConstraints(
         minHeight: 30,
       ),
@@ -64,57 +65,70 @@ class _TableRowsState extends State<TableRows> {
               top: 0,
               left: 0,
               width: width,
-              height: 50,
-              child: Column(
-                children: [
-                  Container(
-                    height: 20,
-                    decoration: BoxDecoration(
-                        // color: Colors.black,
-                        border: Border.all(width: 1, color: Colors.blue)),
-                  ),
-                  Container(
-                    height: 20,
-                    decoration: BoxDecoration(
-                        // color: Colors.black,
-                        border: Border.all(width: 1, color: Colors.blue)),
-                    child: Row(
+              height: 100,
+              child: FutureBuilder(
+                future: _setRowUIList(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
                       children: [
-                        // for (var item in widget.taskList)
-                        //   Expanded(
-                        //     flex: 7,
-                        //     child: Container(
-                        //       color: Colors.blue,
-                        //       child:
-                        //           Text("[VRIS] 모시깽이 작업${item['start_date']}"),
-                        //     ),
-                        //   ),
-                        Expanded(
-                          flex: 7,
-                          child: Container(
-                            color: Colors.blue,
-                            child: Text("${widget.taskList[0]['title']}"),
-                          ),
+                        Container(
+                          height: 20,
+                          decoration: BoxDecoration(
+                              // color: Colors.black,
+                              border: Border.all(width: 1, color: Colors.blue)),
                         ),
+                        for (var item in snapshot.data)
+                          Container(
+                            height: 20,
+                            decoration: BoxDecoration(
+                                // color: Colors.black,
+                                border:
+                                    Border.all(width: 1, color: Colors.blue)),
+                            child: Row(
+                              children: [
+                                // for (var item in widget.taskList)
+                                //   Expanded(
+                                //     flex: 7,
+                                //     child: Container(
+                                //       color: Colors.blue,
+                                //       child:
+                                //           Text("[VRIS] 모시깽이 작업${item['start_date']}"),
+                                //     ),
+                                //   ),
+                                for (var task in item)
+                                  // print(task);
+                                  Expanded(
+                                    flex: task,
+                                    child: Container(
+                                      color: Colors.blue,
+                                      child: Text("${task.toString()}"),
+                                    ),
+                                  ),
 
-                        // Expanded(
-                        //   flex: 5,
-                        //   child: Container(
-                        //     color: Colors.red,
-                        //     child: Text("[VRIS] 모시깽이 작업"),
-                        //   ),
-                        // ),
+                                // Expanded(
+                                //   flex: 5,
+                                //   child: Container(
+                                //     color: Colors.red,
+                                //     child: Text("[VRIS] 모시깽이 작업"),
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ),
                       ],
-                    ),
-                  ),
-                ],
+                    );
+                  } else {
+                    return Text("xxx");
+                  }
+                },
               )),
         ],
       ),
     );
   }
 
-  void _setRowUIList() {
+  Future<List<List<int>>> _setRowUIList() async {
     List<dynamic> tasks = [];
     List<int> rowDate =
         widget.monthData.sublist(widget.startNum, widget.endNum + 1);
@@ -125,28 +139,56 @@ class _TableRowsState extends State<TableRows> {
         tasks.add(task);
       }
     }
-    print("tasks-->");
-    print(tasks);
+    // print("tasks-->");
+    // print(tasks);
     // get List
     // print(rowDate.toString());
-    print(rowDate);
+    // print(rowDate);
     List<List<int>> taskUIList = [];
-    for (var task in tasks) {
+    for (int j = 0; j < tasks.length; j++) {
+      var task = tasks[j];
       List<int> tmp = [];
-      print(task['start_date']);
-      print(task['end_date']);
+      // print(task['start_date']);
+      // print(task['end_date']);
+
+      //로직 검토
       if (!rowDate.contains(task['start_date'])) {
         if (!rowDate.contains(task['end_date'])) {
           tmp.add(7);
         } else {
           tmp.add(rowDate.indexOf(task['end_date']) + 1);
-          tmp.add(6 - rowDate.indexOf(task['end_date']));
+          if ((rowDate.indexOf(task['end_date']) + 1) != 7) {
+            tmp.add(6 - rowDate.indexOf(task['end_date']));
+          }
+        }
+      } else {
+        tmp.add(rowDate.indexOf(task['start_date']));
+        if (!rowDate.contains(task['end_date'])) {
+          tmp.add(7 - rowDate.indexOf(task['start_date']));
+        } else {
+          if (!rowDate.contains(task['end_date'])) {
+            tmp.add(7 - rowDate.indexOf(task['start_date']));
+          } else {
+            tmp.add(rowDate.indexOf(task['end_date']) -
+                rowDate.indexOf(task['start_date']) +
+                1);
+
+            if (rowDate.indexOf(task['start_date']) +
+                    rowDate.indexOf(task['end_date']) -
+                    rowDate.indexOf(task['start_date']) !=
+                7) {
+              tmp.add(4 -
+                  rowDate.indexOf(task['start_date']) +
+                  rowDate.indexOf(task['end_date']) -
+                  rowDate.indexOf(task['start_date']));
+            }
+          }
         }
       }
-      print(tmp);
-      // print(rowDate.indexOf(task['start_date']));
-      // print(rowDate.indexOf(task['end_date']));
-      // if(task['start_date'].toString().substring(5))
+      // print(tmp);
+      taskUIList.add(tmp);
     }
+    print(taskUIList);
+    return taskUIList;
   }
 }
