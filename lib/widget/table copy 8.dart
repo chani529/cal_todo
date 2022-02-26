@@ -28,44 +28,16 @@ class _CalTableState extends State<CalTable> {
     // print(width);
     UtilFunction func = UtilFunction();
     List<int> monthData = func.getMounthList(toYear, toMonth);
-    tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
-    Stream<QuerySnapshot> taskList =
-        readItems(toYear: toYear, toMonth: toMonth, monthData: monthData);
-    StreamSubscription? sub;
-    Map? data;
+    Future<List<dynamic>> abcd =
+        tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
+    Stream<QuerySnapshot> taskList = readItems(
+        toYear: toYear, toMonth: toMonth, monthData: monthData, abcd: abcd);
+
     @override
     void initState() {
-      sub = FirebaseFirestore.instance
-          .collection('todo_tbl')
-          .where('end_date',
-              isGreaterThanOrEqualTo: int.parse(
-                  "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}"))
-          .snapshots()
-          .listen((event) {
-        setState(() {
-          data = event.metadata as Map;
-        });
-      });
+      readItems(
+          toYear: toYear, toMonth: toMonth, monthData: monthData, abcd: abcd);
       super.initState();
-    }
-
-    @override
-    void dispose() {
-      sub?.cancel();
-      super.dispose();
-    }
-
-    dynamic data;
-
-    Future<dynamic> getData() async {
-      final DocumentReference document =
-          Firestore.instance.collection("listofprods").document('ac1');
-
-      await document.get().then<dynamic>((DocumentSnapshot snapshot) async {
-        setState(() {
-          data = snapshot.data;
-        });
-      });
     }
 
     /*24 is for notification bar on Android*/
@@ -128,45 +100,94 @@ class _CalTableState extends State<CalTable> {
           //         endNum: 41,
           //         monthData: monthData,
           //         taskList: taskList)),
+          FutureBuilder(
+              future:
+                  tests(toYear: toYear, toMonth: toMonth, monthData: monthData),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                print("bbbbb");
+                taskList.listen((event) {
+                  abcd = tests(
+                      toYear: toYear, toMonth: toMonth, monthData: monthData);
+                });
+                //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    abcd = tests(
+                        toYear: toYear, toMonth: toMonth, monthData: monthData);
+
+                    return new Text('loading...');
+                  case ConnectionState.waiting:
+                    return new Text('loading...');
+                  default:
+                    if (snapshot.hasData == false) {
+                      return CircularProgressIndicator();
+                    }
+
+                    //error가 발생하게 될 경우 반환하게 되는 부분
+                    else if (snapshot.hasError) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Error: ${snapshot.error}',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      );
+                    }
+                    // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                    else {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          snapshot.data.toString(),
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      );
+                    }
+                }
+              }),
           TextButton(
               onPressed: () {
-                print(data);
                 // addItem(start_date: 20220228);
               },
-              child: Text("Add"))
+              child: Text(abcd.toString()))
         ],
       ),
     );
   }
 
-  static Stream<QuerySnapshot> tests(
+  static Future<List> tests(
       {required int toYear,
       required int toMonth,
-      required List<int> monthData}) {
-    Query<Map<String, dynamic>> notesItemCollection = FirebaseFirestore.instance
+      required List<int> monthData}) async {
+    Iterable<Set<Map>> tempDoc;
+    var documentSnapshot = await FirebaseFirestore.instance
         .collection('todo_tbl')
         .where('end_date',
             isGreaterThanOrEqualTo: int.parse(
-                "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}"));
-    // firebase 다른필드에 부등호 못씀........
-    // .where('start_date', isLessThan: 20220312);
+                "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}"))
+        .get()
+        .then((querySnapshot) => {
+              tempDoc = querySnapshot.docs.map((doc) => {
+                    {'id': doc.id, ...doc.data()}
+                  })
+            });
 
-    // .where('end_date',
-    //     isGreaterThanOrEqualTo: int.parse(
-    //         "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}"));
-    // firebase 다른필드에 부등호 못씀........
-    // .where('start_date', isLessThan: 20220312);
-    print("sss");
-    return notesItemCollection.snapshots();
+    print("sssxxxx");
+    print("xx");
+    var tmp = [];
+    print(documentSnapshot.map((e) => e.map((e) => e.map((e) => tmp.add(e)))));
+    print(tmp);
+    return tmp;
   }
 
   static Stream<QuerySnapshot> readItems(
       {required int toYear,
       required int toMonth,
-      required List<int> monthData}) {
-    print("xx");
-    print(
-        "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}");
+      required List<int> monthData,
+      required Future<List<dynamic>> abcd}) {
+    // print("xx");
+    // print(
+    //     "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}");
     Query<Map<String, dynamic>> notesItemCollection = FirebaseFirestore.instance
         .collection('todo_tbl')
         .where('end_date',
@@ -175,6 +196,11 @@ class _CalTableState extends State<CalTable> {
     // firebase 다른필드에 부등호 못씀........
     // .where('start_date', isLessThan: 20220312);
     // notesItemCollection.snapshots().
+
+    notesItemCollection.snapshots().listen((event) {
+      print("asdasdasdasdasdasda");
+      abcd = tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
+    });
     return notesItemCollection.snapshots();
   }
 
