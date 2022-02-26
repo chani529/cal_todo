@@ -81,15 +81,6 @@ class _CalTableState extends State<CalTable> {
                 else {
                   return Column(
                     children: [
-                      // Text(snapshot.data.toString()),
-                      // Text(filterList(
-                      //         taskList: snapshot.data,
-                      //         toYear: toYear,
-                      //         toMonth: toMonth,
-                      //         endNum: 6,
-                      //         startNum: 0,
-                      //         monthData: monthData)
-                      //     .toString()),
                       TableRows(
                           startNum: 0,
                           endNum: 6,
@@ -146,9 +137,7 @@ class _CalTableState extends State<CalTable> {
       required List<int> monthData}) async {
     var documentSnapshot = await FirebaseFirestore.instance
         .collection('todo_tbl')
-        .where('end_date',
-            isGreaterThanOrEqualTo: int.parse(
-                "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}"))
+        .where('end_date', isGreaterThanOrEqualTo: monthData[0])
         .get()
         .then((querySnapshot) => {
               querySnapshot.docs.map((doc) => {
@@ -174,64 +163,12 @@ class _CalTableState extends State<CalTable> {
       required Future<List<dynamic>> abcd}) {
     Query<Map<String, dynamic>> notesItemCollection = FirebaseFirestore.instance
         .collection('todo_tbl')
-        .where('end_date',
-            isGreaterThanOrEqualTo: int.parse(
-                "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}"));
+        .where('end_date', isGreaterThanOrEqualTo: monthData[0]);
     // firebase 다른필드에 부등호 못씀........
     // .where('start_date', isLessThan: 20220312);
     // notesItemCollection.snapshots().
 
     return notesItemCollection.snapshots();
-  }
-
-  static List<dynamic> filterList(
-      {required List<dynamic> taskList,
-      required int toYear,
-      required int toMonth,
-      required int endNum,
-      required int startNum,
-      required List<int> monthData}) {
-    List<dynamic> tmp = [];
-    var rowEndDate = '';
-    rowEndDate = (toMonth == 12 && endNum >= 20 && monthData[endNum] < 10
-            ? toYear + 1
-            : toYear)
-        .toString();
-    var tmpMonth;
-    if (endNum >= 20 && monthData[endNum] < 10) {
-      tmpMonth = toMonth + 1 > 12 ? 1 : toMonth + 1;
-    } else {
-      tmpMonth = toMonth;
-    }
-    rowEndDate += tmpMonth < 10 ? "0$tmpMonth".toString() : tmpMonth.toString();
-    rowEndDate += monthData[endNum] < 10
-        ? "0${monthData[endNum]}"
-        : monthData[endNum].toString();
-    print("xxxxxxxxxxxxxx");
-    print(rowEndDate);
-    int startDate = 0;
-    if (startNum == 0) {
-      startDate = int.parse(
-          "${monthData[0] != 1 && toMonth == 1 ? toYear - 1 : toYear}${monthData[0] != 1 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[0] != 1 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[0] == 1 ? 01 : monthData[0]}");
-    } else if (startNum > 20) {
-      startDate = int.parse(
-          "${monthData[startNum] < 10 && toMonth == 12 ? toYear + 1 : toYear}${monthData[startNum] < 10 ? toMonth != 12 && toMonth + 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[startNum] < 10 ? toMonth == 12 ? 1 : toMonth + 1 : toMonth}${monthData[startNum] < 10 ? "0${monthData[startNum]}" : monthData[0]}");
-    } else {
-      startDate = int.parse(
-          "$toYear${monthData[startNum] < 10 ? toMonth != 1 && toMonth - 1 < 10 ? 0 : "" : toMonth < 10 ? 0 : ""}${monthData[startNum] < 10 ? toMonth == 1 ? 12 : toMonth - 1 : toMonth}${monthData[startNum] < 10 ? "0${monthData[startNum]}" : monthData[startNum]}");
-    }
-    print("psjdfpajsdfs");
-    print(startDate);
-    for (int i = 0; i < taskList.length; i++) {
-      var task = taskList[i];
-      if (task["start_date"] < monthData[endNum] &&
-          task['end_date'] > startDate) {
-        tmp.add(task);
-      }
-    }
-    print("tmp-->");
-    print(tmp);
-    return tmp;
   }
 
   Future<void> addItem({

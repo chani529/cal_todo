@@ -18,10 +18,10 @@ class UtilFunction {
         var tmp = '';
         if (month == 1) {
           tmp = "${year - 1}12";
-        } else if (month < 10) {
-          tmp = "${year}0$month";
+        } else if (month - 1 < 10) {
+          tmp = "${year}0${month - 1}";
         } else {
-          tmp = '$year$month';
+          tmp = '$year${month - 1}';
         }
         monthData.add(int.parse("$tmp$i"));
       }
@@ -44,10 +44,10 @@ class UtilFunction {
       var tmp = '';
       if (month == 12) {
         tmp = "${year + 1}01";
-      } else if (month < 10) {
-        tmp = "${year}0$month";
+      } else if (month + 1 < 10) {
+        tmp = "${year}0${month + 1}";
       } else {
-        tmp = '$year$month';
+        tmp = '$year${month + 1}';
       }
       if (i < 10) {
         tmp += "0$i";

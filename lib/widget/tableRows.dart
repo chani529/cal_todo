@@ -55,7 +55,7 @@ class _TableRowsState extends State<TableRows> {
                   flex: 1,
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
-                    child: Text(widget.monthData[i].toString()),
+                    child: Text(widget.monthData[i].toString().substring(6)),
                   ),
                 ),
             ],
@@ -115,58 +115,37 @@ class _TableRowsState extends State<TableRows> {
   }
 
   void _setRowUIList() {
-    List<dynamic> tmp = [];
-    var rowEndDate = '';
-    rowEndDate = (widget.toMonth == 12 &&
-                widget.endNum >= 20 &&
-                widget.monthData[widget.endNum] < 10
-            ? widget.toYear + 1
-            : widget.toYear)
-        .toString();
-    var tmpMonth;
-    if (widget.endNum >= 20 && widget.monthData[widget.endNum] < 14) {
-      tmpMonth = widget.toMonth + 1 > 12 ? 1 : widget.toMonth + 1;
-    } else {
-      tmpMonth = widget.toMonth;
-    }
-    rowEndDate += tmpMonth < 10 ? "0$tmpMonth".toString() : tmpMonth.toString();
-    rowEndDate += widget.monthData[widget.endNum] < 10
-        ? "0${widget.monthData[widget.endNum]}"
-        : widget.monthData[widget.endNum].toString();
-    print("rowEndDate==>");
-    print(rowEndDate);
-    int startDate = 0;
-    if (widget.startNum == 0) {
-      print("${widget.startNum}x0");
-      startDate = int.parse(
-          "${widget.monthData[0] != 1 && widget.toMonth == 1 ? widget.toYear - 1 : widget.toYear}${widget.monthData[0] != 1 ? widget.toMonth != 1 && widget.toMonth - 1 < 10 ? 0 : "" : widget.toMonth < 10 ? 0 : ""}${widget.monthData[0] != 1 ? widget.toMonth == 1 ? 12 : widget.toMonth - 1 : widget.toMonth}${widget.monthData[0] == 1 ? 01 : widget.monthData[0]}");
-    } else if (widget.startNum > 20) {
-      print("${widget.startNum}x1");
-      startDate = int.parse(
-          "${widget.monthData[widget.startNum] < 10 && widget.toMonth == 12 ? widget.toYear + 1 : widget.toYear}${widget.monthData[widget.startNum] < 10 ? widget.toMonth != 12 && widget.toMonth + 1 < 10 ? 0 : "" : widget.toMonth < 10 ? 0 : ""}${widget.monthData[widget.startNum] < 10 ? widget.toMonth == 12 ? 1 : widget.toMonth + 1 : widget.toMonth}${widget.monthData[widget.startNum] < 10 ? "0${widget.monthData[widget.startNum]}" : widget.monthData[0]}");
-    } else {
-      print("${widget.startNum}x2");
-      startDate = int.parse(
-          "${widget.toYear}${widget.monthData[widget.startNum] < 10 ? widget.toMonth != 1 && widget.toMonth - 1 < 10 ? 0 : "" : widget.toMonth < 10 ? 0 : ""}${widget.monthData[widget.startNum] < 10 ? widget.toMonth == 1 ? 12 : widget.toMonth - 1 : widget.toMonth}${widget.monthData[widget.startNum] < 10 ? "0${widget.monthData[widget.startNum]}" : widget.monthData[widget.startNum]}");
-    }
-    print("startDate");
-    print(startDate);
-    for (int i = 0; i < widget.taskList.length; i++) {
-      var task = widget.taskList[i];
-      if (task["start_date"] < int.parse(rowEndDate) &&
-          task['end_date'] > startDate) {
-        tmp.add(task);
-      }
-    }
-    print("tmp-->");
-    print(tmp);
-    // get List
+    List<dynamic> tasks = [];
     List<int> rowDate =
         widget.monthData.sublist(widget.startNum, widget.endNum + 1);
+
+    for (int i = 0; i < widget.taskList.length; i++) {
+      var task = widget.taskList[i];
+      if (task["start_date"] < rowDate[6] && task['end_date'] > rowDate[0]) {
+        tasks.add(task);
+      }
+    }
+    print("tasks-->");
+    print(tasks);
+    // get List
     // print(rowDate.toString());
-    for (var task in tmp) {
-      print(rowDate
-          .indexOf(int.parse((task['start_date'].toString().substring(6)))));
+    print(rowDate);
+    List<List<int>> taskUIList = [];
+    for (var task in tasks) {
+      List<int> tmp = [];
+      print(task['start_date']);
+      print(task['end_date']);
+      if (!rowDate.contains(task['start_date'])) {
+        if (!rowDate.contains(task['end_date'])) {
+          tmp.add(7);
+        } else {
+          tmp.add(rowDate.indexOf(task['end_date']) + 1);
+          tmp.add(6 - rowDate.indexOf(task['end_date']));
+        }
+      }
+      print(tmp);
+      // print(rowDate.indexOf(task['start_date']));
+      // print(rowDate.indexOf(task['end_date']));
       // if(task['start_date'].toString().substring(5))
     }
   }
