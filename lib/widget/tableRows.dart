@@ -35,7 +35,7 @@ class _TableRowsState extends State<TableRows> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width - 18.0;
     _setRowUIList();
     // print(height);
     // print(width);
@@ -60,11 +60,8 @@ class _TableRowsState extends State<TableRows> {
                     for (var i = widget.startNum; i <= widget.endNum; i++)
                       Expanded(
                         flex: 1,
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child:
-                              Text(widget.monthData[i].toString().substring(6)),
-                        ),
+                        child:
+                            Text(widget.monthData[i].toString().substring(6)),
                       ),
                   ],
                 ),
@@ -88,18 +85,16 @@ class _TableRowsState extends State<TableRows> {
                                   children: [
                                     Container(
                                       height: 20,
-                                      decoration: BoxDecoration(
-                                          // color: Colors.black,
-                                          border: Border.all(
-                                              width: 1, color: Colors.blue)),
                                     ),
                                     for (var item in snapshot.data)
                                       Container(
                                         height: 20,
+                                        width: double.infinity,
                                         decoration: BoxDecoration(
                                             // color: Colors.black,
                                             border: Border.all(
-                                                width: 1, color: Colors.black)),
+                                                width: 0.2,
+                                                color: Colors.black)),
                                         child: Row(
                                           children: [
                                             for (var task in item)
@@ -107,7 +102,8 @@ class _TableRowsState extends State<TableRows> {
                                               Expanded(
                                                 flex: task,
                                                 child: Container(
-                                                  // color: Colors.blue,
+                                                  width: double
+                                                      .infinity, // color: Colors.blue,
                                                   decoration: BoxDecoration(
                                                       // color: Colors.black,
                                                       border: Border.all(
@@ -117,14 +113,6 @@ class _TableRowsState extends State<TableRows> {
                                                       "${task.toString()}"),
                                                 ),
                                               ),
-
-                                            // Expanded(
-                                            //   flex: 5,
-                                            //   child: Container(
-                                            //     color: Colors.red,
-                                            //     child: Text("[VRIS] 모시깽이 작업"),
-                                            //   ),
-                                            // ),
                                           ],
                                         ),
                                       ),
