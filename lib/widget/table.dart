@@ -16,11 +16,15 @@ class CalTable extends StatefulWidget {
 }
 
 class _CalTableState extends State<CalTable> {
+  int toYear = 2022;
+  int toMonth = 2;
+  // void _incrementcs() {
+  //   // 플러터 메서드에 내장
+
+  // }
+
   @override
   Widget build(BuildContext context) {
-    final int toYear = 2022;
-    final int toMonth = 2;
-
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
@@ -43,89 +47,123 @@ class _CalTableState extends State<CalTable> {
       constraints: BoxConstraints(
         minHeight: 100,
       ),
-      child: FutureBuilder(
-          future: abcd,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            // print("bbbbb");
-            // taskList.listen((event) {
-            //   setState(() {});
-            // });
-            //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
-            // switch (snapshot.connectionState) {
-            //   case ConnectionState.none:
-            //     abcd = tests(
-            //         toYear: toYear, toMonth: toMonth, monthData: monthData);
-
-            //     return Text('loading...');
-            //   case ConnectionState.waiting:
-            //     return Text('loading...');
-            //   default:
-            if (snapshot.hasData == false) {
-              return CircularProgressIndicator();
-            }
-
-            //error가 발생하게 될 경우 반환하게 되는 부분
-            else if (snapshot.hasError) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Error: ${snapshot.error}',
-                  style: TextStyle(fontSize: 15),
+      child: Column(
+        children: [
+          Container(
+            height: 40,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10.0),
+                    topLeft: Radius.circular(10.0)),
+                color: Colors.blue),
+            child: Stack(
+              children: [
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      TextButton(
+                        onPressed: () => setState(() => toMonth--),
+                        child: Text("<", style: TextStyle(fontSize: 25)),
+                      ),
+                      Text("$toYear / $toMonth",
+                          style: TextStyle(fontSize: 25)),
+                      TextButton(
+                        onPressed: () => setState(() => toMonth++),
+                        child: Text(">", style: TextStyle(fontSize: 25)),
+                      )
+                    ],
+                  ),
                 ),
-              );
-            }
-            // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-            else {
-              return Column(
-                children: [
-                  TableRows(
-                      startNum: 0,
-                      endNum: 6,
-                      monthData: monthData,
-                      taskList: snapshot.data,
-                      toMonth: toMonth,
-                      toYear: toYear),
-                  TableRows(
-                      startNum: 7,
-                      endNum: 13,
-                      monthData: monthData,
-                      taskList: snapshot.data,
-                      toMonth: toMonth,
-                      toYear: toYear),
-                  TableRows(
-                      startNum: 14,
-                      endNum: 20,
-                      monthData: monthData,
-                      taskList: snapshot.data,
-                      toMonth: toMonth,
-                      toYear: toYear),
-                  TableRows(
-                      startNum: 21,
-                      endNum: 27,
-                      monthData: monthData,
-                      taskList: snapshot.data,
-                      toMonth: toMonth,
-                      toYear: toYear),
-                  TableRows(
-                      startNum: 28,
-                      endNum: 34,
-                      monthData: monthData,
-                      taskList: snapshot.data,
-                      toMonth: toMonth,
-                      toYear: toYear),
-                  TableRows(
-                      startNum: 35,
-                      endNum: 41,
-                      monthData: monthData,
-                      taskList: snapshot.data,
-                      toMonth: toMonth,
-                      toYear: toYear),
-                ],
-              );
-            }
-          }
-          // }
+              ],
+            ),
           ),
+          FutureBuilder(
+              future: abcd,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                // print("bbbbb");
+                // taskList.listen((event) {
+                //   setState(() {});
+                // });
+                //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
+                // switch (snapshot.connectionState) {
+                //   case ConnectionState.none:
+                //     abcd = tests(
+                //         toYear: toYear, toMonth: toMonth, monthData: monthData);
+
+                //     return Text('loading...');
+                //   case ConnectionState.waiting:
+                //     return Text('loading...');
+                //   default:
+                if (snapshot.hasData == false) {
+                  return CircularProgressIndicator();
+                }
+
+                //error가 발생하게 될 경우 반환하게 되는 부분
+                else if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  );
+                }
+                // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                else {
+                  return Column(
+                    children: [
+                      TableRows(
+                          startNum: 0,
+                          endNum: 6,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 7,
+                          endNum: 13,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 14,
+                          endNum: 20,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 21,
+                          endNum: 27,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 28,
+                          endNum: 34,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                      TableRows(
+                          startNum: 35,
+                          endNum: 41,
+                          monthData: monthData,
+                          taskList: snapshot.data,
+                          toMonth: toMonth,
+                          toYear: toYear),
+                    ],
+                  );
+                }
+              }
+              // }
+              ),
+        ],
+      ),
     );
   }
 

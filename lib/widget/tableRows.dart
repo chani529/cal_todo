@@ -163,8 +163,8 @@ class _TableRowsState extends State<TableRows> {
               rowDate.indexOf(task['end_date']) + 1));
           // 종료 일 이후 빈칸 만들기 (7일 꽉 차있으면 안만들기 위함)
           if ((rowDate.indexOf(task['end_date']) + 1) != 7) {
-            tmp.add(UIInfo(task['title'], '', task['color'],
-                6 - rowDate.indexOf(task['end_date'])));
+            tmp.add(UIInfo(
+                '', '', 0xFFFFEBEE, 6 - rowDate.indexOf(task['end_date'])));
           }
         }
       } else {
