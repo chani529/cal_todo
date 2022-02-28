@@ -56,7 +56,7 @@ class _CalTableState extends State<CalTable> {
                 borderRadius: BorderRadius.only(
                     topRight: Radius.circular(10.0),
                     topLeft: Radius.circular(10.0)),
-                color: Colors.blue),
+                color: Colors.grey.shade800),
             child: Stack(
               children: [
                 Center(
@@ -65,13 +65,20 @@ class _CalTableState extends State<CalTable> {
                     children: <Widget>[
                       TextButton(
                         onPressed: () => setState(() => toMonth--),
-                        child: Text("<", style: TextStyle(fontSize: 25)),
+                        child: Text("<",
+                            style:
+                                TextStyle(fontSize: 25, color: Colors.white)),
                       ),
                       Text("$toYear / $toMonth",
-                          style: TextStyle(fontSize: 25)),
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
                       TextButton(
                         onPressed: () => setState(() => toMonth++),
-                        child: Text(">", style: TextStyle(fontSize: 25)),
+                        child: Text(">",
+                            style:
+                                TextStyle(fontSize: 25, color: Colors.white)),
                       )
                     ],
                   ),

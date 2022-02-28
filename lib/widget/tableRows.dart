@@ -52,78 +52,87 @@ class _TableRowsState extends State<TableRows> {
             constraints: BoxConstraints(
               minHeight: 30,
             ),
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: Colors.grey.shade400)),
             child: Stack(
               children: [
+                Container(
+                  color: Colors.grey.shade800,
+                  child: FutureBuilder(
+                      future: _setRowUIList(),
+                      builder: (context1, AsyncSnapshot snapshot1) {
+                        return Positioned(
+                            top: 0,
+                            left: 0,
+                            width: width,
+                            height: 85.0 +
+                                (snapshot1.data != null &&
+                                        snapshot1.data.length > 3
+                                    ? (snapshot1.data.length - 3) * 20.0
+                                    : 0.0),
+                            child: FutureBuilder(
+                              future: _setRowUIList(),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return Column(
+                                    children: [
+                                      Container(
+                                        height: 20,
+                                      ),
+                                      for (var item in snapshot.data)
+                                        Container(
+                                          height: 20,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              // color: Colors.black,
+                                              border: Border.all(
+                                                  width: 0.2,
+                                                  color: Colors.black)),
+                                          child: Row(
+                                            children: [
+                                              for (var task in item)
+                                                // print(task);
+                                                Expanded(
+                                                  flex: task.bar_length,
+                                                  child: Container(
+                                                    width: double
+                                                        .infinity, // color: Colors.blue,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Color(task.color),
+                                                        border: Border.all(
+                                                          width: 1,
+                                                        )),
+                                                    child:
+                                                        Text("${task.title}"),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                } else {
+                                  return Text("xxx");
+                                }
+                              },
+                            ));
+                      }),
+                ),
                 Row(
                   children: [
                     for (var i = widget.startNum; i <= widget.endNum; i++)
                       Expanded(
                         flex: 1,
-                        child:
-                            Text(widget.monthData[i].toString().substring(6)),
+                        child: Container(
+                            color: Colors.grey.shade800,
+                            child: Text(
+                              widget.monthData[i].toString().substring(6),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            )),
                       ),
                   ],
                 ),
-                FutureBuilder(
-                    future: _setRowUIList(),
-                    builder: (context1, AsyncSnapshot snapshot1) {
-                      return Positioned(
-                          top: 0,
-                          left: 0,
-                          width: width,
-                          height: 85.0 +
-                              (snapshot1.data != null &&
-                                      snapshot1.data.length > 3
-                                  ? (snapshot1.data.length - 3) * 20.0
-                                  : 0.0),
-                          child: FutureBuilder(
-                            future: _setRowUIList(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                return Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                    ),
-                                    for (var item in snapshot.data)
-                                      Container(
-                                        height: 20,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                            // color: Colors.black,
-                                            border: Border.all(
-                                                width: 0.2,
-                                                color: Colors.black)),
-                                        child: Row(
-                                          children: [
-                                            for (var task in item)
-                                              // print(task);
-                                              Expanded(
-                                                flex: task.bar_length,
-                                                child: Container(
-                                                  width: double
-                                                      .infinity, // color: Colors.blue,
-                                                  decoration: BoxDecoration(
-                                                      color: Color(task.color),
-                                                      border: Border.all(
-                                                        width: 1,
-                                                      )),
-                                                  child: Text("${task.title}"),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                  ],
-                                );
-                              } else {
-                                return Text("xxx");
-                              }
-                            },
-                          ));
-                    }),
               ],
             ),
           );

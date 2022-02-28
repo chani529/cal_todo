@@ -13,8 +13,12 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  int start_input = 0;
-  int end_input = 0;
+  TextEditingController startDateCtl = TextEditingController();
+  TextEditingController endDateCtl = TextEditingController();
+  DateTime? start_input;
+  DateTime? end_input;
+  int? start_date = 0;
+  int? end_date = 0;
   String input = "";
 
   @override
@@ -36,59 +40,83 @@ class _HomepageState extends State<Homepage> {
                     title: Text("Add Todolist"),
                     content: Column(
                       children: [
-                        TextField(
-                          onChanged: (String value) {
-                            input = value;
-                          },
-                          decoration: InputDecoration(
-                            // labelText: '텍스트 입력',
-                            hintText: '제목',
-                            border: OutlineInputBorder(), //외곽선
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            startDatePickerPop();
-                          },
-                          child: Container(
-                            height: 50,
-                            margin: const EdgeInsets.all(10.0),
-                            padding: const EdgeInsets.only(
-                              left: 15,
-                            ),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                              width: 3,
-                              color: Colors.amberAccent,
-                            )),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              start_input == 0
-                                  ? '시작 일'
-                                  : start_input.toString(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: 35,
+                            child: TextField(
+                              onChanged: (String value) {
+                                input = value;
+                              },
+                              decoration: InputDecoration(
+                                labelText: '제목',
+                                // hintText: '제목',
+                                border: OutlineInputBorder(), //외곽선
+                              ),
                             ),
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            endDatePickerPop();
-                          },
-                          child: Container(
-                            height: 50,
-                            margin: const EdgeInsets.all(10.0),
-                            padding: const EdgeInsets.only(
-                              left: 15,
-                            ),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                              width: 3,
-                              color: Colors.amberAccent,
-                            )),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              end_input == 0 ? '종료 일' : end_input.toString(),
-                            ),
-                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                              height: 35,
+                              width: 250,
+                              child: TextFormField(
+                                  readOnly: true,
+                                  controller: startDateCtl,
+                                  decoration: InputDecoration(
+                                    labelText: '시작 일',
+                                    border: OutlineInputBorder(), //외곽선
+                                  ),
+                                  onTap: () async {
+                                    start_input = (await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(), //초기값
+                                        firstDate: DateTime(2021), //시작일
+                                        lastDate: DateTime(2023))); //마지막일
+                                    if (start_input == null) {
+                                      start_date = int.parse(DateTime.now()
+                                          .toString()
+                                          .replaceAll("-", '')
+                                          .substring(0, 8));
+                                    } else {
+                                      startDateCtl.text = start_input
+                                          .toString()
+                                          .replaceAll("-", '')
+                                          .substring(0, 8);
+                                    }
+                                  })),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                              height: 35,
+                              width: 250,
+                              child: TextFormField(
+                                  readOnly: true,
+                                  controller: endDateCtl,
+                                  decoration: InputDecoration(
+                                    labelText: '종료 일',
+                                    border: OutlineInputBorder(), //외곽선
+                                  ),
+                                  onTap: () async {
+                                    end_input = (await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(), //초기값
+                                        firstDate: DateTime(2021), //시작일
+                                        lastDate: DateTime(2023))); //마지막일
+                                    if (end_input == null) {
+                                      end_date = int.parse(DateTime.now()
+                                          .toString()
+                                          .replaceAll("-", '')
+                                          .substring(0, 8));
+                                    } else {
+                                      endDateCtl.text = end_input
+                                          .toString()
+                                          .replaceAll("-", '')
+                                          .substring(0, 8);
+                                    }
+                                  })),
                         ),
                       ],
                     ),
@@ -96,19 +124,28 @@ class _HomepageState extends State<Homepage> {
                       TextButton(
                           onPressed: () {
                             addItem(
-                                start_date: start_input,
-                                end_date: end_input,
+                                start_date: start_date!,
+                                end_date: end_date!,
                                 title: input);
                             Navigator.of(context).pop();
                             setState(() {
-                              start_input = 0;
-                              end_input = 0;
+                              start_input = null;
+                              end_input = null;
                               input = '';
                             }); // input 입력 후 창 닫히도록
                           },
                           child: Text("Add"))
                     ]);
-              })
+              }).then((value) {
+            start_input = null;
+            start_date = null;
+            end_input = null;
+            end_date = null;
+            startDateCtl.text = '';
+            endDateCtl.text = '';
+            input = '';
+            return null;
+          })
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
@@ -137,43 +174,45 @@ class _HomepageState extends State<Homepage> {
         .catchError((e) => print(e));
   }
 
-  void startDatePickerPop() {
-    Future<DateTime?> selectedDate = showDatePicker(
-      context: context,
-      initialDate: DateTime.now(), //초기값
-      firstDate: DateTime(2021), //시작일
-      lastDate: DateTime(2023), //마지막일
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.dark(), //다크 테마
-          child: child!,
-        );
-      },
-    );
-    selectedDate.then((dateTime) {
-      start_input =
-          int.parse(dateTime.toString().replaceAll("-", '').substring(0, 8));
-      print(dateTime.toString().replaceAll("-", '').substring(0, 8));
-    });
-  }
+  // void startDatePickerPop() {
+  //   Future<DateTime?> selectedDate = showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(), //초기값
+  //     firstDate: DateTime(2021), //시작일
+  //     lastDate: DateTime(2023), //마지막일
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.dark(), //다크 테마
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //   selectedDate.then((dateTime) {
+  //     start_input =
+  //         int.parse(dateTime.toString().replaceAll("-", '').substring(0, 8));
+  //     print(dateTime.toString().replaceAll("-", '').substring(0, 8));
+  //   });
+  // }
 
-  void endDatePickerPop() {
-    Future<DateTime?> selectedDate = showDatePicker(
-      context: context,
-      initialDate: DateTime.now(), //초기값
-      firstDate: DateTime(2021), //시작일
-      lastDate: DateTime(2023), //마지막일
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.dark(), //다크 테마
-          child: child!,
-        );
-      },
-    );
-    selectedDate.then((dateTime) {
-      end_input =
-          int.parse(dateTime.toString().replaceAll("-", '').substring(0, 8));
-      print(dateTime.toString().replaceAll("-", '').substring(0, 8));
-    });
-  }
+  // void endDatePickerPop() {
+  //   Future<DateTime?> selectedDate = showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(), //초기값
+  //     firstDate: DateTime(2021), //시작일
+  //     lastDate: DateTime(2023), //마지막일
+  //     builder: (BuildContext context, Widget? child) {
+  //       return Theme(
+  //         data: ThemeData.dark(), //다크 테마
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //   selectedDate.then((dateTime) {
+  //     setState(() {
+  //       end_input =
+  //           int.parse(dateTime.toString().replaceAll("-", '').substring(0, 8));
+  //       print(dateTime.toString().replaceAll("-", '').substring(0, 8));
+  //     });
+  //   });
+  // }
 }
