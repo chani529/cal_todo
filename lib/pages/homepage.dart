@@ -29,7 +29,7 @@ class _HomepageState extends State<Homepage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: CalTable(),
+        child: SingleChildScrollView(child: CalTable()),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {

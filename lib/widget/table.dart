@@ -20,22 +20,25 @@ class _CalTableState extends State<CalTable> {
   int toMonth = 2;
   // void _incrementcs() {
   //   // 플러터 메서드에 내장
-
+  Future<List<dynamic>>? abcd = null;
+  Stream<QuerySnapshot>? taskList = null;
   // }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    List<String> _week = ['S', 'M', "T", "W", "T", "F", "S"];
+    // setState(() {
 
-    // print(height);
-    // print(width);
+    // });
     UtilFunction func = UtilFunction();
     List<int> monthData = func.getMounthList(toYear, toMonth);
-    Future<List<dynamic>> abcd =
-        tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
-    Stream<QuerySnapshot> taskList = readItems(
-        toYear: toYear, toMonth: toMonth, monthData: monthData, abcd: abcd);
+    abcd = tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
+    taskList = readItems(
+        toYear: toYear, toMonth: toMonth, monthData: monthData, abcd: abcd!);
+    // print(height);
+    // print(width);
 
     // @override
     // void initState() {
@@ -86,13 +89,41 @@ class _CalTableState extends State<CalTable> {
               ],
             ),
           ),
+          Container(
+            width: double.infinity,
+            height: 25,
+            decoration: BoxDecoration(
+                color: Colors.grey.shade800,
+                border:
+                    Border(top: BorderSide(width: 1.0, color: Colors.white38))),
+            child: Row(
+              children: [
+                for (var item in _week)
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+              ],
+            ),
+          ),
           FutureBuilder(
               future: abcd,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 // print("bbbbb");
-                // taskList.listen((event) {
-                //   setState(() {});
-                // });
+                //데이터 다시받아오는 부분
+                taskList?.listen((QuerySnapshot querySnapshot) {
+                  for (var i in querySnapshot.docChanges) {
+                    if (i.type == DocumentChangeType.added) {
+                      if (mounted) {
+                        setState(() {});
+                      }
+                    }
+                  }
+                });
                 //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
                 // switch (snapshot.connectionState) {
                 //   case ConnectionState.none:
@@ -211,7 +242,12 @@ class _CalTableState extends State<CalTable> {
         .where('end_date', isGreaterThanOrEqualTo: monthData[0]);
     // firebase 다른필드에 부등호 못씀........
     // .where('start_date', isLessThan: 20220312);
-    // notesItemCollection.snapshots().listen((event) {});
+
+    // notesItemCollection.snapshots().listen((event) {
+    //   setState(() {abcd =
+    //         tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
+    //   });
+    // });
     return notesItemCollection.snapshots();
   }
 

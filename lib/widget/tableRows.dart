@@ -36,38 +36,34 @@ class _TableRowsState extends State<TableRows> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width - 18.0;
+    double width = MediaQuery.of(context).size.width - 16.0;
     _setRowUIList();
-    // print(height);
-    // print(width);
     return FutureBuilder(
         future: _setRowUIList(),
         builder: (contexta, AsyncSnapshot snapshota) {
           return Container(
-            height: 85.0 +
+            height: 100.0 +
                 (snapshota.data != null && snapshota.data.length > 3
-                    ? (snapshota.data.length - 3) * 20.0
+                    ? (snapshota.data.length - 3) * 25.0
                     : 0.0),
             // height: 80.0 * widget.taskList.length,
-            constraints: BoxConstraints(
-              minHeight: 30,
-            ),
+
             child: Stack(
               children: [
-                Container(
-                  color: Colors.grey.shade800,
-                  child: FutureBuilder(
-                      future: _setRowUIList(),
-                      builder: (context1, AsyncSnapshot snapshot1) {
-                        return Positioned(
-                            top: 0,
-                            left: 0,
-                            width: width,
-                            height: 85.0 +
-                                (snapshot1.data != null &&
-                                        snapshot1.data.length > 3
-                                    ? (snapshot1.data.length - 3) * 20.0
-                                    : 0.0),
+                FutureBuilder(
+                    future: _setRowUIList(),
+                    builder: (context1, AsyncSnapshot snapshot1) {
+                      return Positioned(
+                          top: 0,
+                          left: 0,
+                          width: width,
+                          height: 100.0 +
+                              (snapshot1.data != null &&
+                                      snapshot1.data.length > 3
+                                  ? (snapshot1.data.length - 3) * 25.0
+                                  : 0.0),
+                          child: Container(
+                            color: Colors.grey.shade800,
                             child: FutureBuilder(
                               future: _setRowUIList(),
                               builder: (context, AsyncSnapshot snapshot) {
@@ -75,37 +71,39 @@ class _TableRowsState extends State<TableRows> {
                                   return Column(
                                     children: [
                                       Container(
-                                        height: 20,
+                                        height: 25,
                                       ),
                                       for (var item in snapshot.data)
-                                        Container(
-                                          height: 20,
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                              // color: Colors.black,
-                                              border: Border.all(
-                                                  width: 0.2,
-                                                  color: Colors.black)),
-                                          child: Row(
-                                            children: [
-                                              for (var task in item)
-                                                // print(task);
-                                                Expanded(
-                                                  flex: task.bar_length,
-                                                  child: Container(
-                                                    width: double
-                                                        .infinity, // color: Colors.blue,
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Color(task.color),
-                                                        border: Border.all(
-                                                          width: 1,
-                                                        )),
-                                                    child:
-                                                        Text("${task.title}"),
+                                        Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: SizedBox(
+                                            height: 20,
+                                            width: double.infinity,
+                                            child: Row(
+                                              children: [
+                                                for (var task in item)
+                                                  // print(task);
+                                                  Expanded(
+                                                    flex: task.bar_length,
+                                                    child: Container(
+                                                      width: double
+                                                          .infinity, // color: Colors.blue,
+                                                      decoration: BoxDecoration(
+                                                          color:
+                                                              Color(task.color),
+                                                          border: task.title ==
+                                                                  ''
+                                                              ? null
+                                                              : Border.all(
+                                                                  width: 1,
+                                                                  color: Colors
+                                                                      .white)),
+                                                      child:
+                                                          Text("${task.title}"),
+                                                    ),
                                                   ),
-                                                ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                     ],
@@ -114,16 +112,20 @@ class _TableRowsState extends State<TableRows> {
                                   return Text("xxx");
                                 }
                               },
-                            ));
-                      }),
-                ),
+                            ),
+                          ));
+                    }),
                 Row(
                   children: [
                     for (var i = widget.startNum; i <= widget.endNum; i++)
                       Expanded(
                         flex: 1,
                         child: Container(
-                            color: Colors.grey.shade800,
+                            decoration: BoxDecoration(
+                                color: Colors.grey.shade800,
+                                border: Border(
+                                    top: BorderSide(
+                                        width: 1.0, color: Colors.white38))),
                             child: Text(
                               widget.monthData[i].toString().substring(6),
                               style: TextStyle(
@@ -151,7 +153,7 @@ class _TableRowsState extends State<TableRows> {
       }
     }
     List<List<UIInfo>> taskUIList = [];
-    print(rowDate);
+    // print(rowDate);
     for (int j = 0; j < tasks.length; j++) {
       var task = tasks[j];
       List<UIInfo> tmp = [];
@@ -160,7 +162,7 @@ class _TableRowsState extends State<TableRows> {
 
       //로직 검토
       // start date가 이번주가 아닌경우 (이 전에 시작된 일정)
-      print(task);
+      // print(task);
       if (!rowDate.contains(task['start_date'])) {
         // 이번 주 종료 일정이 아닌 경우
         if (!rowDate.contains(task['end_date'])) {
@@ -173,7 +175,7 @@ class _TableRowsState extends State<TableRows> {
           // 종료 일 이후 빈칸 만들기 (7일 꽉 차있으면 안만들기 위함)
           if ((rowDate.indexOf(task['end_date']) + 1) != 7) {
             tmp.add(UIInfo(
-                '', '', 0xFFFFEBEE, 6 - rowDate.indexOf(task['end_date'])));
+                '', '', 0xFF424242, 6 - rowDate.indexOf(task['end_date'])));
           }
         }
       } else {
@@ -194,7 +196,7 @@ class _TableRowsState extends State<TableRows> {
         } else {
           // 시작 날짜까지 공백
           tmp.add(
-              UIInfo('', '', 0xFFFFEBEE, rowDate.indexOf(task['start_date'])));
+              UIInfo('', '', 0xFF424242, rowDate.indexOf(task['start_date'])));
           // 마지막 날짜 포함하지 않았을 경우
           if (!rowDate.contains(task['end_date'])) {
             tmp.add(UIInfo(task['title'], '', task['color'],
@@ -222,12 +224,12 @@ class _TableRowsState extends State<TableRows> {
           endRow += element;
         }
         if (endRow != 7) {
-          tmp.add(UIInfo('', '', 0xFFFFEBEE, 7 - endRow));
+          tmp.add(UIInfo('', '', 0xFF424242, 7 - endRow));
         }
       }
       taskUIList.add(tmp);
     }
-    print(taskUIList);
+    // print(taskUIList);
     return taskUIList;
   }
 }
