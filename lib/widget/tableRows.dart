@@ -2,6 +2,7 @@
 
 import 'package:calendartodo/models/taskInfo.dart';
 import 'package:calendartodo/models/UIInfo.dart';
+import 'package:calendartodo/widget/taskDialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -85,21 +86,28 @@ class _TableRowsState extends State<TableRows> {
                                                   // print(task);
                                                   Expanded(
                                                     flex: task.bar_length,
-                                                    child: Container(
+                                                    child: SizedBox(
                                                       width: double
                                                           .infinity, // color: Colors.blue,
-                                                      decoration: BoxDecoration(
-                                                          color:
-                                                              Color(task.color),
-                                                          border: task.title ==
-                                                                  ''
-                                                              ? null
-                                                              : Border.all(
-                                                                  width: 1,
-                                                                  color: Colors
-                                                                      .white)),
-                                                      child:
-                                                          Text("${task.title}"),
+                                                      child: ElevatedButton(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            primary: Color(
+                                                                task.color),
+                                                          ),
+                                                          onPressed: () async {
+                                                            if (task.docID !=
+                                                                null) {
+                                                              await taskDialog(
+                                                                  context,
+                                                                  task.docID,
+                                                                  task.title,
+                                                                  task.start_date,
+                                                                  task.end_date);
+                                                            }
+                                                          },
+                                                          child: Text(
+                                                              "${task.title}")),
                                                     ),
                                                   ),
                                               ],
@@ -167,15 +175,22 @@ class _TableRowsState extends State<TableRows> {
         // 이번 주 종료 일정이 아닌 경우
         if (!rowDate.contains(task['end_date'])) {
           // 7칸 전부 색칠
-          tmp.add(UIInfo(task['title'], '', task['color'], 7));
+          tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+              task['title'], '', task['color'], 7));
         } else {
           // 이번주 종료 이벤트 인덱스가 0부터 시작이기 때문에 +1
-          tmp.add(UIInfo(task['title'], '', task['color'],
+          tmp.add(UIInfo(
+              task['start_date'],
+              task['end_date'],
+              task['id'],
+              task['title'],
+              '',
+              task['color'],
               rowDate.indexOf(task['end_date']) + 1));
           // 종료 일 이후 빈칸 만들기 (7일 꽉 차있으면 안만들기 위함)
           if ((rowDate.indexOf(task['end_date']) + 1) != 7) {
-            tmp.add(UIInfo(
-                '', '', 0xFF424242, 6 - rowDate.indexOf(task['end_date'])));
+            tmp.add(UIInfo(null, null, null, '', '', 0xFF424242,
+                6 - rowDate.indexOf(task['end_date'])));
           }
         }
       } else {
@@ -183,32 +198,50 @@ class _TableRowsState extends State<TableRows> {
         if (rowDate.indexOf(task['start_date']) == 0) {
           //끝도 0 이라면
           if (rowDate.indexOf(task['end_date']) == 0) {
-            tmp.add(UIInfo(task['title'], '', task['color'], 1));
+            tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+                task['title'], '', task['color'], 1));
           } else {
             if (!rowDate.contains(task['end_date'])) {
               //시작이 0이면서 끝이 포함되지 않으면
-              tmp.add(UIInfo(task['title'], '', task['color'], 7));
+              tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+                  task['title'], '', task['color'], 7));
             } else {
-              tmp.add(UIInfo(task['title'], '', task['color'],
+              tmp.add(UIInfo(
+                  task['start_date'],
+                  task['end_date'],
+                  task['id'],
+                  task['title'],
+                  '',
+                  task['color'],
                   rowDate.indexOf(task['end_date']) + 1));
             }
           }
         } else {
           // 시작 날짜까지 공백
-          tmp.add(
-              UIInfo('', '', 0xFF424242, rowDate.indexOf(task['start_date'])));
+          tmp.add(UIInfo(null, null, null, '', '', 0xFF424242,
+              rowDate.indexOf(task['start_date'])));
           // 마지막 날짜 포함하지 않았을 경우
           if (!rowDate.contains(task['end_date'])) {
-            tmp.add(UIInfo(task['title'], '', task['color'],
+            tmp.add(UIInfo(
+                task['start_date'],
+                task['end_date'],
+                task['id'],
+                task['title'],
+                '',
+                task['color'],
                 7 - rowDate.indexOf(task['start_date'])));
           } else if (rowDate.indexOf(task['end_date']) -
                   rowDate.indexOf(task['start_date']) ==
               0) {
             //포함일 경우 1일짜리 task일 때
-            tmp.add(UIInfo(task['title'], '', task['color'], 1));
+            tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+                task['title'], '', task['color'], 1));
           } else {
             //여러 날짜일 경우
             tmp.add(UIInfo(
+                task['start_date'],
+                task['end_date'],
+                task['id'],
                 task['title'],
                 '',
                 task['color'],
@@ -224,7 +257,7 @@ class _TableRowsState extends State<TableRows> {
           endRow += element;
         }
         if (endRow != 7) {
-          tmp.add(UIInfo('', '', 0xFF424242, 7 - endRow));
+          tmp.add(UIInfo(null, null, null, '', '', 0xFF424242, 7 - endRow));
         }
       }
       taskUIList.add(tmp);

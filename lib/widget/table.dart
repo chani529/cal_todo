@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:calendartodo/models/taskInfo.dart';
 import 'package:calendartodo/util/getMonthFunction.dart';
 import 'package:flutter/material.dart';
 import 'package:calendartodo/widget/tableRows.dart';
@@ -16,9 +15,8 @@ class CalTable extends StatefulWidget {
 }
 
 class _CalTableState extends State<CalTable> {
-  int toYear = 2022;
-  int toMonth = 2;
-  // void _incrementcs() {
+  int toYear = DateTime.now().year;
+  int toMonth = DateTime.now().month; // void _incrementcs() {
   //   // 플러터 메서드에 내장
   Future<List<dynamic>>? abcd = null;
   Stream<QuerySnapshot>? taskList = null;
@@ -243,39 +241,6 @@ class _CalTableState extends State<CalTable> {
     // firebase 다른필드에 부등호 못씀........
     // .where('start_date', isLessThan: 20220312);
 
-    // notesItemCollection.snapshots().listen((event) {
-    //   setState(() {abcd =
-    //         tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
-    //   });
-    // });
     return notesItemCollection.snapshots();
-  }
-
-  Future<void> addItem({
-    required int start_date,
-  }) async {
-    DocumentReference documentReferencer =
-        FirebaseFirestore.instance.collection('todo_tbl').doc();
-
-    Map<String, dynamic> data = <String, dynamic>{
-      "start_date": start_date,
-    };
-
-    await documentReferencer
-        .set(data)
-        .whenComplete(() => print("Notes item added to the database"))
-        .catchError((e) => print(e));
-  }
-
-  Future<void> deleteItem({
-    required String docId,
-  }) async {
-    DocumentReference documentReferencer =
-        FirebaseFirestore.instance.collection('todo_tbl').doc(docId);
-
-    await documentReferencer
-        .delete()
-        .whenComplete(() => print('Note item deleted from the database'))
-        .catchError((e) => print(e));
   }
 }
