@@ -5,19 +5,20 @@ import 'package:flutter/material.dart';
 
 taskDialog(BuildContext context, String? docID, String? input, int? start_date,
     int? end_date) async {
+  TextEditingController inputDateCtl = TextEditingController();
   TextEditingController startDateCtl = TextEditingController();
   TextEditingController endDateCtl = TextEditingController();
   DateTime? start_input;
   DateTime? end_input;
+  if (docID != null) {
+    print("xxx");
+    inputDateCtl.text = input!;
+    startDateCtl.text = start_date.toString();
+    endDateCtl.text = end_date.toString();
+  }
   // int? start_date = 0;
   // int? end_date = 0;
   // String input = "";
-  @override
-  void initState() {
-    print("initState");
-    print("initState");
-    print("initState");
-  }
 
   Future<void> addItem({
     required int start_date,
@@ -86,6 +87,7 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
                   child: SizedBox(
                     height: 35,
                     child: TextField(
+                      controller: inputDateCtl,
                       onChanged: (String? value) {
                         input = value;
                       },
@@ -170,15 +172,34 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
               ],
             ),
             actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    addItem(
-                        start_date: start_date!,
-                        end_date: end_date!,
-                        title: input!);
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Add"))
+              if (input != null)
+                TextButton(
+                    onPressed: () {
+                      deleteItem(docId: docID!);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Delete")),
+              if (input != null)
+                TextButton(
+                    onPressed: () {
+                      updateItem(
+                          start_date: start_date!,
+                          end_date: end_date!,
+                          title: input!,
+                          docId: docID!);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Update")),
+              if (input == null)
+                TextButton(
+                    onPressed: () {
+                      addItem(
+                          start_date: start_date!,
+                          end_date: end_date!,
+                          title: input!);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Add")),
             ]);
       });
 }
