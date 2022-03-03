@@ -1,9 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:calendartodo/models/taskInfo.dart';
 import 'package:calendartodo/models/UIInfo.dart';
 import 'package:calendartodo/widget/taskDialog.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class TableRows extends StatefulWidget {
@@ -29,16 +27,9 @@ class TableRows extends StatefulWidget {
 
 class _TableRowsState extends State<TableRows> {
   @override
-  void initState() {
-    super.initState();
-    _setRowUIList();
-  }
-
-  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width - 16.0;
-    _setRowUIList();
     return FutureBuilder(
         future: _setRowUIList(),
         builder: (contexta, AsyncSnapshot snapshota) {
@@ -83,7 +74,6 @@ class _TableRowsState extends State<TableRows> {
                                             child: Row(
                                               children: [
                                                 for (var task in item)
-                                                  // print(task);
                                                   Expanded(
                                                     flex: task.bar_length,
                                                     child: SizedBox(
@@ -92,6 +82,9 @@ class _TableRowsState extends State<TableRows> {
                                                       child: ElevatedButton(
                                                           style: ElevatedButton
                                                               .styleFrom(
+                                                            elevation: 0.0,
+                                                            shadowColor: Colors
+                                                                .transparent,
                                                             primary: Color(
                                                                 task.color),
                                                           ),
@@ -137,7 +130,12 @@ class _TableRowsState extends State<TableRows> {
                             child: Text(
                               widget.monthData[i].toString().substring(6),
                               style: TextStyle(
-                                  color: Colors.white,
+                                  color: int.parse(widget.monthData[i]
+                                              .toString()
+                                              .substring(4, 6)) ==
+                                          widget.toMonth
+                                      ? Colors.white
+                                      : Colors.grey,
                                   fontWeight: FontWeight.bold),
                             )),
                       ),
@@ -150,6 +148,7 @@ class _TableRowsState extends State<TableRows> {
   }
 
   Future<List<List<UIInfo>>> _setRowUIList() async {
+    print("aaaaaaaaaaaaaaaa");
     List<dynamic> tasks = [];
     List<int> rowDate =
         widget.monthData.sublist(widget.startNum, widget.endNum + 1);
@@ -168,7 +167,6 @@ class _TableRowsState extends State<TableRows> {
       // print(task['start_date']);
       // print(task['end_date']);
 
-      //로직 검토
       // start date가 이번주가 아닌경우 (이 전에 시작된 일정)
       // print(task);
       if (!rowDate.contains(task['start_date'])) {

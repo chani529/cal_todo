@@ -18,9 +18,34 @@ class _CalTableState extends State<CalTable> {
   int toYear = DateTime.now().year;
   int toMonth = DateTime.now().month; // void _incrementcs() {
   //   // 플러터 메서드에 내장
-  Future<List<dynamic>>? abcd = null;
-  Stream<QuerySnapshot>? taskList = null;
+  Future<List<dynamic>>? abcd;
+  Stream<QuerySnapshot>? taskList;
   // }
+  UtilFunction func = UtilFunction();
+  List<int> monthData = [];
+  @override
+  void initState() {
+    monthData = func.getMounthList(toYear, toMonth);
+    print("initState:::::::");
+    print(monthData[0]);
+    FirebaseFirestore.instance
+        .collection('todo_tbl')
+        .where('end_date', isGreaterThanOrEqualTo: monthData[0])
+        .snapshots()
+        .listen((QuerySnapshot querySnapshot) {
+      for (var i in querySnapshot.docChanges) {
+        print(i.type);
+        if (i.type == DocumentChangeType.added ||
+            i.type == DocumentChangeType.modified ||
+            i.type == DocumentChangeType.removed) {
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,18 +55,10 @@ class _CalTableState extends State<CalTable> {
     // setState(() {
 
     // });
-    UtilFunction func = UtilFunction();
-    List<int> monthData = func.getMounthList(toYear, toMonth);
-    abcd = tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
-    taskList = readItems(
-        toYear: toYear, toMonth: toMonth, monthData: monthData, abcd: abcd!);
-    // print(height);
-    // print(width);
 
-    // @override
-    // void initState() {
-    //   super.initState();
-    // }
+    abcd = tests(toYear: toYear, toMonth: toMonth, monthData: monthData);
+
+    // print(width);
 
     /*24 is for notification bar on Android*/
     return Container(
@@ -65,7 +82,10 @@ class _CalTableState extends State<CalTable> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       TextButton(
-                        onPressed: () => setState(() => toMonth--),
+                        onPressed: () => setState(() {
+                          toMonth--;
+                          monthData = func.getMounthList(toYear, toMonth);
+                        }),
                         child: Text("<",
                             style:
                                 TextStyle(fontSize: 25, color: Colors.white)),
@@ -76,7 +96,10 @@ class _CalTableState extends State<CalTable> {
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                       TextButton(
-                        onPressed: () => setState(() => toMonth++),
+                        onPressed: () => setState(() {
+                          toMonth++;
+                          monthData = func.getMounthList(toYear, toMonth);
+                        }),
                         child: Text(">",
                             style:
                                 TextStyle(fontSize: 25, color: Colors.white)),
@@ -113,15 +136,7 @@ class _CalTableState extends State<CalTable> {
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 // print("bbbbb");
                 //데이터 다시받아오는 부분
-                taskList?.listen((QuerySnapshot querySnapshot) {
-                  for (var i in querySnapshot.docChanges) {
-                    if (i.type == DocumentChangeType.added) {
-                      if (mounted) {
-                        setState(() {});
-                      }
-                    }
-                  }
-                });
+
                 //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
                 // switch (snapshot.connectionState) {
                 //   case ConnectionState.none:

@@ -10,8 +10,8 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
   TextEditingController endDateCtl = TextEditingController();
   DateTime? start_input;
   DateTime? end_input;
+  String dropdownValue = 'Red';
   if (docID != null) {
-    print("xxx");
     inputDateCtl.text = input!;
     startDateCtl.text = start_date.toString();
     endDateCtl.text = end_date.toString();
@@ -20,19 +20,28 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
   // int? end_date = 0;
   // String input = "";
 
-  Future<void> addItem({
-    required int start_date,
-    required int end_date,
-    required String title,
-  }) async {
+  Future<void> addItem(
+      {required int start_date,
+      required int end_date,
+      required String title,
+      required String color}) async {
     DocumentReference documentReferencer =
         FirebaseFirestore.instance.collection('todo_tbl').doc();
-
+    int colorNum;
+    if (color == 'Red') {
+      colorNum = 4294901760;
+    } else if (color == 'Yellow') {
+      colorNum = 4294963574;
+    } else if (color == 'Blue') {
+      colorNum = 4280391411;
+    } else {
+      colorNum = 4284922730;
+    }
     Map<String, dynamic> data = <String, dynamic>{
       "start_date": start_date,
       "end_date": end_date,
       "title": title,
-      "color": 4294901760,
+      "color": colorNum,
     };
 
     await documentReferencer
@@ -41,20 +50,29 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
         .catchError((e) => print(e));
   }
 
-  Future<void> updateItem({
-    required String title,
-    required int start_date,
-    required int end_date,
-    required String docId,
-  }) async {
+  Future<void> updateItem(
+      {required String title,
+      required int start_date,
+      required int end_date,
+      required String docId,
+      required String color}) async {
     DocumentReference documentReferencer =
         FirebaseFirestore.instance.collection('todo_tbl').doc(docId);
-
+    int colorNum;
+    if (color == 'Red') {
+      colorNum = 4294901760;
+    } else if (color == 'Yellow') {
+      colorNum = 4294963574;
+    } else if (color == 'Blue') {
+      colorNum = 4280391411;
+    } else {
+      colorNum = 4284922730;
+    }
     Map<String, dynamic> data = <String, dynamic>{
       "start_date": start_date,
       "end_date": end_date,
       "title": title,
-      "color": 4294901760,
+      "color": colorNum,
     };
 
     await documentReferencer
@@ -169,6 +187,35 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
                             }
                           })),
                 ),
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 35,
+                      width: 250,
+                      padding: EdgeInsets.only(left: 8),
+                      decoration: BoxDecoration(
+                          // hintText: '제목',
+                          border: Border.all(
+                              width: 1, color: Colors.green.shade400),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(5)) //외곽선
+                          ),
+                      child: DropdownButton<String>(
+                        value: dropdownValue,
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        onChanged: (String? newValue) {
+                          dropdownValue = newValue!;
+                        },
+                        items: <String>['Red', 'Blue', 'Green', 'Yellow']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    )),
               ],
             ),
             actions: <Widget>[
@@ -186,7 +233,8 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
                           start_date: start_date!,
                           end_date: end_date!,
                           title: input!,
-                          docId: docID!);
+                          docId: docID!,
+                          color: dropdownValue);
                       Navigator.of(context).pop();
                     },
                     child: Text("Update")),
@@ -196,7 +244,8 @@ taskDialog(BuildContext context, String? docID, String? input, int? start_date,
                       addItem(
                           start_date: start_date!,
                           end_date: end_date!,
-                          title: input!);
+                          title: input!,
+                          color: dropdownValue);
                       Navigator.of(context).pop();
                     },
                     child: Text("Add")),
