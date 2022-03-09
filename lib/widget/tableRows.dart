@@ -82,12 +82,20 @@ class _TableRowsState extends State<TableRows> {
                                                   ),
                                                   onPressed: () async {
                                                     if (task.docID != null) {
-                                                      await taskDialog(
-                                                          context,
-                                                          task.docID,
-                                                          task.title,
-                                                          task.start_date,
-                                                          task.end_date);
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return SetTaskDialog(
+                                                            docID: task.docID,
+                                                            end_date:
+                                                                task.end_date,
+                                                            input: task.title,
+                                                            start_date:
+                                                                task.start_date,
+                                                          );
+                                                        },
+                                                      );
                                                     }
                                                   },
                                                   child: Text("${task.title}",
@@ -174,7 +182,7 @@ class _TableRowsState extends State<TableRows> {
       // print(taskLists.length.toString());
       for (var i = 0; i < taskLists.length; i++) {
         checkMerge = true;
-        print(taskLists[i].join(', '));
+
         for (var j = 0; j < 7; j++) {
           // print(
           //     'i : ${i},j : ${j} check ${checkTaskDate[j]} , task ${taskLists[i][j]}');
@@ -209,9 +217,7 @@ class _TableRowsState extends State<TableRows> {
         taskUIList.add(tmp);
       }
     }
-    for (var i = 0; i < taskLists.length; i++) {
-      print(taskLists[i].join(', '));
-    }
+
     List<List<UIInfo>> resultTaskUIList = [];
     for (var i = 0; i < taskUIList.length; i++) {
       List<UIInfo> tmp = taskUIList[i];

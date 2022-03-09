@@ -3,6 +3,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:calendartodo/widget/table.dart';
 import 'package:calendartodo/widget/taskDialog.dart';
+import 'package:calendartodo/widget/tmp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -25,8 +26,20 @@ class _HomepageState extends State<Homepage> {
         child: SingleChildScrollView(child: CalTable()),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await taskDialog(context, null, null, null, null);
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SetTaskDialog(
+                docID: null,
+                end_date: null,
+                input: null,
+                start_date: null,
+              );
+            },
+          );
+
+          // await taskDialog(context, null, null, null, null);
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
