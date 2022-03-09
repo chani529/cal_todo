@@ -32,90 +32,75 @@ class _TableRowsState extends State<TableRows> {
     double width = MediaQuery.of(context).size.width - 16.0;
     return FutureBuilder(
         future: _setRowUIList(),
-        builder: (contexta, AsyncSnapshot snapshota) {
+        builder: (contexta, AsyncSnapshot snapshot) {
           return Container(
             height: 100.0 +
-                (snapshota.data != null && snapshota.data.length > 3
-                    ? (snapshota.data.length - 3) * 25.0
+                (snapshot.data != null && snapshot.data.length > 3
+                    ? (snapshot.data.length - 3) * 25.0
                     : 0.0),
             // height: 80.0 * widget.taskList.length,
 
             child: Stack(
               children: [
-                FutureBuilder(
-                    future: _setRowUIList(),
-                    builder: (context1, AsyncSnapshot snapshot1) {
-                      return Positioned(
-                          top: 0,
-                          left: 0,
-                          width: width,
-                          height: 100.0 +
-                              (snapshot1.data != null &&
-                                      snapshot1.data.length > 3
-                                  ? (snapshot1.data.length - 3) * 25.0
-                                  : 0.0),
-                          child: Container(
-                            color: Colors.grey.shade800,
-                            child: FutureBuilder(
-                              future: _setRowUIList(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        height: 25,
-                                      ),
-                                      for (var item in snapshot.data)
-                                        Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: SizedBox(
-                                            height: 20,
-                                            width: double.infinity,
-                                            child: Row(
-                                              children: [
-                                                for (var task in item)
-                                                  Expanded(
-                                                    flex: task.bar_length,
-                                                    child: SizedBox(
-                                                      width: double
-                                                          .infinity, // color: Colors.blue,
-                                                      child: ElevatedButton(
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                            elevation: 0.0,
-                                                            shadowColor: Colors
-                                                                .transparent,
-                                                            primary: Color(
-                                                                task.color),
-                                                          ),
-                                                          onPressed: () async {
-                                                            if (task.docID !=
-                                                                null) {
-                                                              await taskDialog(
-                                                                  context,
-                                                                  task.docID,
-                                                                  task.title,
-                                                                  task.start_date,
-                                                                  task.end_date);
-                                                            }
-                                                          },
-                                                          child: Text(
-                                                              "${task.title}")),
-                                                    ),
+                Positioned(
+                    top: 0,
+                    left: 0,
+                    width: width,
+                    height: 100.0 +
+                        (snapshot.data != null && snapshot.data.length > 3
+                            ? (snapshot.data.length - 3) * 25.0
+                            : 0.0),
+                    child: Container(
+                        color: Colors.grey.shade800,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 25,
+                            ),
+                            if (snapshot.hasData)
+                              for (var item in snapshot.data)
+                                Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: SizedBox(
+                                    height: 20,
+                                    width: double.infinity,
+                                    child: Row(
+                                      children: [
+                                        for (var task in item)
+                                          Expanded(
+                                            flex: task.bar_length,
+                                            child: SizedBox(
+                                              width: double
+                                                  .infinity, // color: Colors.blue,
+                                              child: ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    elevation: 0.0,
+                                                    shadowColor:
+                                                        Colors.transparent,
+                                                    primary: Color(task.color),
                                                   ),
-                                              ],
+                                                  onPressed: () async {
+                                                    if (task.docID != null) {
+                                                      await taskDialog(
+                                                          context,
+                                                          task.docID,
+                                                          task.title,
+                                                          task.start_date,
+                                                          task.end_date);
+                                                    }
+                                                  },
+                                                  child: Text("${task.title}",
+                                                      overflow: TextOverflow
+                                                          .ellipsis)),
                                             ),
                                           ),
-                                        ),
-                                    ],
-                                  );
-                                } else {
-                                  return Text("xxx");
-                                }
-                              },
-                            ),
-                          ));
-                    }),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                          ],
+                        ))),
                 Row(
                   children: [
                     for (var i = widget.startNum; i <= widget.endNum; i++)
@@ -148,7 +133,6 @@ class _TableRowsState extends State<TableRows> {
   }
 
   Future<List<List<UIInfo>>> _setRowUIList() async {
-    print("aaaaaaaaaaaaaaaa");
     List<dynamic> tasks = [];
     List<int> rowDate =
         widget.monthData.sublist(widget.startNum, widget.endNum + 1);
@@ -258,6 +242,15 @@ class _TableRowsState extends State<TableRows> {
           tmp.add(UIInfo(null, null, null, '', '', 0xFF424242, 7 - endRow));
         }
       }
+      for (var i = 0; i < taskUIList.length; i++) {
+        print("---------");
+        for (var j = 0; j < taskUIList[i].length; j++) {
+          print(taskUIList[i][j].start_date != null);
+          print(taskUIList[i][j].bar_length);
+        }
+        print("---------");
+      }
+      print(tmp);
       taskUIList.add(tmp);
     }
     // print(taskUIList);
