@@ -12,5 +12,9 @@ class UIInfo {
 
   UIInfo(this.start_date, this.end_date, this.docID, this.title, this.desc,
       this.color, this.bar_length);
-  // TodoInfo(this.title, this.desc, this.color, this.reg_user, this.bar_length);
+
+  @override
+  String toString() {
+    return 'Student: {start: ${start_date}, end: ${end_date}, title : ${title}, len : ${bar_length}}';
+  }
 }

@@ -143,101 +143,108 @@ class _TableRowsState extends State<TableRows> {
         tasks.add(task);
       }
     }
-    List<List<int>> taskLists = [];
     List<List<UIInfo>> taskUIList = [];
     // print(rowDate);
-    for (int a = 0; a < tasks.length; a++) {
-      List<int> checkTaskDate = [0, 0, 0, 0, 0, 0, 0];
-      var task = tasks[a];
+    for (int j = 0; j < tasks.length; j++) {
+      var task = tasks[j];
       List<UIInfo> tmp = [];
-      for (var i = 0; i < 7; i++) {
-        tmp.add(UIInfo(null, null, null, '', '', 0xFF424242, 0));
-      }
+      // print(task['start_date']);
+      // print(task['end_date']);
+
       // start date가 이번주가 아닌경우 (이 전에 시작된 일정)
-      for (var i = (rowDate.contains(task['start_date'])
-              ? rowDate.indexOf(task['start_date'])
-              : 0);
-          i <=
-              (rowDate.contains(task['end_date'])
-                  ? rowDate.indexOf(task['end_date'])
-                  : 6);
-          i++) {
-        tmp[i] = UIInfo(task['start_date'], task['end_date'], task['id'],
-            task['title'], '', task['color'], 0);
-        checkTaskDate[i] = 1;
-      }
-      // print(checkTaskDate.join(', '));
-      taskLists.add(checkTaskDate);
-      int taskNum = 0;
-      bool checkMerge = true;
-      // print("xxx");
-      // print(taskLists.length.toString());
-      for (var i = 0; i < taskLists.length; i++) {
-        checkMerge = true;
-        print(taskLists[i].join(', '));
-        for (var j = 0; j < 7; j++) {
-          // print(
-          //     'i : ${i},j : ${j} check ${checkTaskDate[j]} , task ${taskLists[i][j]}');
-          if (checkTaskDate[j] == 1 && taskLists[i][j] == 1) {
-            checkMerge = false;
-            break;
+      // print(task);
+      if (!rowDate.contains(task['start_date'])) {
+        // 이번 주 종료 일정이 아닌 경우
+        if (!rowDate.contains(task['end_date'])) {
+          // 7칸 전부 색칠
+          tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+              task['title'], '', task['color'], 7));
+        } else {
+          // 이번주 종료 이벤트 인덱스가 0부터 시작이기 때문에 +1
+          tmp.add(UIInfo(
+              task['start_date'],
+              task['end_date'],
+              task['id'],
+              task['title'],
+              '',
+              task['color'],
+              rowDate.indexOf(task['end_date']) + 1));
+          // 종료 일 이후 빈칸 만들기 (7일 꽉 차있으면 안만들기 위함)
+          if ((rowDate.indexOf(task['end_date']) + 1) != 7) {
+            tmp.add(UIInfo(null, null, null, '', '', 0xFF424242,
+                6 - rowDate.indexOf(task['end_date'])));
           }
         }
-        if (checkMerge) {
-          taskNum = i;
-          break;
-        }
-      }
-      // print("taskNum.toString()");
-      // print(taskNum.toString());
-      // print(checkMerge);
-      if (checkMerge) {
-        for (var k = (rowDate.contains(task['start_date'])
-                ? rowDate.indexOf(task['start_date'])
-                : 0);
-            k <=
-                (rowDate.contains(task['end_date'])
-                    ? rowDate.indexOf(task['end_date'])
-                    : 6);
-            k++) {
-          taskUIList[taskNum][k] = UIInfo(task['start_date'], task['end_date'],
-              task['id'], task['title'], '', task['color'], 0);
-          taskLists[taskNum][k] = 1;
-        }
-        taskLists.removeAt(taskLists.length - 1);
       } else {
-        taskUIList.add(tmp);
-      }
-    }
-    for (var i = 0; i < taskLists.length; i++) {
-      print(taskLists[i].join(', '));
-    }
-    List<List<UIInfo>> resultTaskUIList = [];
-    for (var i = 0; i < taskUIList.length; i++) {
-      List<UIInfo> tmp = taskUIList[i];
-      List<int> removeList = [];
-      for (var i = 0; i < 7; i++) {
-        tmp[i].bar_length = 1;
-        if (tmp[i].title != 'RemoveTaskJob') {
-          for (var j = i + 1; j < 7; j++) {
-            if (tmp[i].title == tmp[j].title) {
-              tmp[i].bar_length = tmp[i].bar_length + 1;
-              tmp[j].title = 'RemoveTaskJob';
-              removeList.add(j);
+        // 시작 인덱스가 0이면 1로 주기
+        if (rowDate.indexOf(task['start_date']) == 0) {
+          //끝도 0 이라면
+          if (rowDate.indexOf(task['end_date']) == 0) {
+            tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+                task['title'], '', task['color'], 1));
+          } else {
+            if (!rowDate.contains(task['end_date'])) {
+              //시작이 0이면서 끝이 포함되지 않으면
+              tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+                  task['title'], '', task['color'], 7));
             } else {
-              break;
+              tmp.add(UIInfo(
+                  task['start_date'],
+                  task['end_date'],
+                  task['id'],
+                  task['title'],
+                  '',
+                  task['color'],
+                  rowDate.indexOf(task['end_date']) + 1));
             }
           }
+        } else {
+          // 시작 날짜까지 공백
+          tmp.add(UIInfo(null, null, null, '', '', 0xFF424242,
+              rowDate.indexOf(task['start_date'])));
+          // 마지막 날짜 포함하지 않았을 경우
+          if (!rowDate.contains(task['end_date'])) {
+            tmp.add(UIInfo(
+                task['start_date'],
+                task['end_date'],
+                task['id'],
+                task['title'],
+                '',
+                task['color'],
+                7 - rowDate.indexOf(task['start_date'])));
+          } else if (rowDate.indexOf(task['end_date']) -
+                  rowDate.indexOf(task['start_date']) ==
+              0) {
+            //포함일 경우 1일짜리 task일 때
+            tmp.add(UIInfo(task['start_date'], task['end_date'], task['id'],
+                task['title'], '', task['color'], 1));
+          } else {
+            //여러 날짜일 경우
+            tmp.add(UIInfo(
+                task['start_date'],
+                task['end_date'],
+                task['id'],
+                task['title'],
+                '',
+                task['color'],
+                rowDate.indexOf(task['end_date']) -
+                    rowDate.indexOf(task['start_date'])));
+          }
+        }
+        // end_date가 포함되지 않았을 경우 (종료 일이 이번 주가 아닌 경우)
+        // if (!rowDate.contains(task['end_date'])) {
+        int endRow = 0;
+        for (int i = 0; i < tmp.length; i++) {
+          int element = tmp[i].bar_length;
+          endRow += element;
+        }
+        if (endRow != 7) {
+          tmp.add(UIInfo(null, null, null, '', '', 0xFF424242, 7 - endRow));
         }
       }
-      for (var k = removeList.length - 1; k >= 0; k--) {
-        // print(removeList[k]);
-        tmp.removeAt(removeList[k]);
-      }
-      resultTaskUIList.add(tmp);
+      taskUIList.add(tmp);
     }
-
     // print(taskUIList);
-    return resultTaskUIList;
+    return taskUIList;
   }
 }

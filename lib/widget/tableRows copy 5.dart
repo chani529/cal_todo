@@ -168,29 +168,22 @@ class _TableRowsState extends State<TableRows> {
       }
       // print(checkTaskDate.join(', '));
       taskLists.add(checkTaskDate);
-      int taskNum = 0;
       bool checkMerge = true;
-      // print("xxx");
-      // print(taskLists.length.toString());
+      int taskNum = 0;
       for (var i = 0; i < taskLists.length; i++) {
-        checkMerge = true;
-        print(taskLists[i].join(', '));
         for (var j = 0; j < 7; j++) {
-          // print(
-          //     'i : ${i},j : ${j} check ${checkTaskDate[j]} , task ${taskLists[i][j]}');
           if (checkTaskDate[j] == 1 && taskLists[i][j] == 1) {
             checkMerge = false;
-            break;
           }
         }
         if (checkMerge) {
+          print(i.toString());
           taskNum = i;
           break;
         }
       }
-      // print("taskNum.toString()");
-      // print(taskNum.toString());
       // print(checkMerge);
+      // print(taskNum);
       if (checkMerge) {
         for (var k = (rowDate.contains(task['start_date'])
                 ? rowDate.indexOf(task['start_date'])
@@ -206,12 +199,24 @@ class _TableRowsState extends State<TableRows> {
         }
         taskLists.removeAt(taskLists.length - 1);
       } else {
+        taskLists.add(checkTaskDate);
         taskUIList.add(tmp);
       }
+
+      // for (var i = 0; i < tmp.length; i++) {
+      //   if (tmp[i].title == 'RemoveTaskJob') {
+      //     tmp.removeAt(i);
+      //   }
+      // }
+      // for (var i = 0; i < tmp.length; i++) {
+      //   print("--------");
+      //   print(tmp[i].toString());
+      // }
+      // print(tmp);
     }
-    for (var i = 0; i < taskLists.length; i++) {
-      print(taskLists[i].join(', '));
-    }
+    // for (var i = 0; i < taskLists.length; i++) {
+    //   print(taskLists[i].join(', '));
+    // }
     List<List<UIInfo>> resultTaskUIList = [];
     for (var i = 0; i < taskUIList.length; i++) {
       List<UIInfo> tmp = taskUIList[i];
